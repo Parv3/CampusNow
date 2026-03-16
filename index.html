@@ -1,253 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f172a">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>GLA Timetable</title>
-  <meta name="description" content="GLA University class schedule — always know where to be." />
-  <meta name="theme-color" content="#1a4731" id="theme-meta" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="GLA Timetable" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root {
-      --display: 'Plus Jakarta Sans', sans-serif;
-      --mono: 'DM Mono', monospace;
-    }
-    <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js')
-    .then(() => console.log("Service Worker Registered"));
-}
-</script>
-    body.dark {
-      --bg:#0c1410; --surface:#131f18; --surface2:#1a2b22; --surface3:#213629;
-      --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
-      --text:#e8f5ee; --text2:#8ab39a; --text3:#4a6b57;
-      --accent:#4eba87; --accent-bg:rgba(78,186,135,0.12); --accent-text:#4eba87;
-      --nav-bg:#0c1410; --red:#ff7070; --red-bg:rgba(255,112,112,0.12);
-      --amber:#fbbf24; --amber-bg:rgba(251,191,36,0.12);
-      --grid-head:#1a2b22; --grid-cell:#131f18; --grid-active:rgba(78,186,135,0.18);
-    }
-  <script>
-let deferredPrompt;
-const installBtn = document.getElementById("installBtn");
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.style.display = "block";
-});
+<title>CampusNow</title>
 
-installBtn.addEventListener("click", async () => {
-  installBtn.style.display = "none";
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a" id="theme-meta">
 
-  deferredPrompt.prompt();
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=DM+Mono&display=swap" rel="stylesheet">
 
-  const { outcome } = await deferredPrompt.userChoice;
+<style>
 
-  if (outcome === "accepted") {
-    console.log("User installed the app");
-  } else {
-    console.log("User dismissed the install");
-  }
+/* KEEP ALL YOUR EXISTING CSS HERE */
+/* DO NOT PUT HTML OR JS INSIDE THIS BLOCK */
 
-  deferredPrompt = null;
-});
-</script>
-    body.light {
-      --bg:#f0f7f3; --surface:#ffffff; --surface2:#e8f4ee; --surface3:#d4eade;
-      --border:rgba(0,0,0,0.07); --border2:rgba(0,0,0,0.13);
-      --text:#0d2318; --text2:#2d6647; --text3:#7aaa8d;
-      --accent:#1f5a3e; --accent-bg:rgba(31,90,62,0.1); --accent-text:#1a4731;
-      --nav-bg:#ffffff; --red:#c0392b; --red-bg:rgba(192,57,43,0.1);
-      --amber:#b45309; --amber-bg:rgba(180,83,9,0.1);
-      --grid-head:#e8f4ee; --grid-cell:#ffffff; --grid-active:rgba(31,90,62,0.12);
-    }
-    body { font-family: var(--display); background:var(--bg); color:var(--text); min-height:100dvh; transition:background .3s,color .3s; overscroll-behavior:none; }
-    .app { max-width:430px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column; }
+</style>
 
-    /* TOPBAR */
-  <button id="installBtn" style="display:none;">
-Install CampusNow
-</button>
-    .topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-bottom:1px solid var(--border); background:var(--bg); position:sticky; top:0; z-index:50; }
-    .topbar-left { display:flex; flex-direction:column; gap:1px; }
-    .topbar-uni { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-family:var(--mono); }
-    .topbar-date { font-size:13px; font-weight:600; color:var(--text2); }
-    .topbar-right { display:flex; align-items:center; gap:10px; }
-    .topbar-clock { font-family:var(--mono); font-size:22px; font-weight:500; color:var(--text); letter-spacing:-.02em; }
-    .theme-toggle { width:34px; height:34px; border-radius:50%; border:1px solid var(--border2); background:var(--surface2); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:15px; transition:all .2s; }
-    .theme-toggle:active { transform:scale(.92); }
-
-    /* INSTALL BANNER */
-    .install-banner { margin:12px 16px 0; background:var(--accent-bg); border:1px solid var(--accent); border-radius:12px; padding:12px 14px; display:none; align-items:center; gap:10px; }
-    .install-banner.show { display:flex; }
-    .install-banner strong { display:block; font-size:13px; color:var(--text); margin-bottom:1px; }
-    .install-banner span { font-size:11px; color:var(--text2); font-family:var(--mono); }
-    .install-btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:8px 14px; font-family:var(--display); font-size:12px; font-weight:700; cursor:pointer; flex-shrink:0; }
-
-    /* DAY ROW */
-    .day-row { display:flex; gap:6px; padding:12px 16px; overflow-x:auto; border-bottom:1px solid var(--border); scrollbar-width:none; }
-    .day-row::-webkit-scrollbar { display:none; }
-    .day-pill { flex-shrink:0; padding:6px 13px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; font-family:var(--mono); cursor:pointer; border:1px solid var(--border2); background:transparent; color:var(--text2); transition:all .15s; }
-    .day-pill.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-    .day-pill.today-pill { border-color:var(--accent); color:var(--accent); }
-    .day-pill.today-pill.active { color:#fff; }
-
-    /* SCREENS */
-    .screen { display:none; flex:1; flex-direction:column; overflow-y:auto; padding-bottom:80px; }
-    .screen.active { display:flex; }
-
-    /* NOW SECTION */
-    .now-section { padding:16px 16px 0; }
-    .sec-label { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; font-family:var(--mono); color:var(--text3); margin-bottom:8px; }
-    .now-card { background:var(--surface); border:1px solid var(--border2); border-radius:16px; padding:20px; margin-bottom:12px; position:relative; overflow:hidden; }
-    .now-card-bar { position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent); }
-    .now-card-bar.free { background:var(--border2); }
-    .now-subject { font-size:28px; font-weight:800; line-height:1.05; margin-bottom:6px; letter-spacing:-.03em; }
-    .now-teacher { font-size:13px; color:var(--text2); margin-bottom:10px; font-weight:600; }
-    .now-location { display:inline-flex; align-items:center; gap:6px; background:var(--accent-bg); color:var(--accent-text); font-family:var(--mono); font-size:13px; font-weight:500; padding:5px 11px; border-radius:8px; margin-bottom:14px; }
-    .loc-dot { width:6px; height:6px; background:var(--accent); border-radius:50%; flex-shrink:0; }
-    .now-bottom { display:flex; align-items:center; justify-content:space-between; }
-    .now-timespan { font-family:var(--mono); font-size:12px; color:var(--text3); }
-    .now-badge { font-family:var(--mono); font-size:11px; font-weight:500; padding:4px 10px; border-radius:20px; }
-    .badge-red { background:var(--red-bg); color:var(--red); }
-    .badge-amber { background:var(--amber-bg); color:var(--amber); }
-    .badge-green { background:var(--accent-bg); color:var(--accent-text); }
-    .free-heading { font-size:24px; font-weight:800; color:var(--text2); margin-bottom:4px; }
-    .free-sub { font-size:13px; color:var(--text3); font-family:var(--mono); }
-    .alarm-set { display:inline-flex; align-items:center; gap:5px; font-family:var(--mono); font-size:10px; color:var(--accent-text); margin-top:8px; }
-    .alarm-dot { width:5px; height:5px; background:var(--accent); border-radius:50%; animation:blink 2s infinite; }
-    @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
-
-    /* NEXT CARD */
-    .next-card { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:14px 16px; display:none; align-items:center; gap:12px; margin:0 16px 16px; }
-    .next-card.show { display:flex; }
-    .next-indicator { width:8px; height:8px; background:#4eba87; border-radius:50%; flex-shrink:0; }
-    .next-info { flex:1; }
-    .next-subject { font-size:14px; font-weight:700; margin-bottom:2px; }
-    .next-meta { font-family:var(--mono); font-size:11px; color:var(--text3); }
-    .next-in { font-family:var(--mono); font-size:11px; font-weight:700; color:#4eba87; flex-shrink:0; }
-
-    /* SCHEDULE LIST */
-    .schedule-section { padding:0 16px 16px; }
-    .sched-row { display:flex; align-items:flex-start; gap:12px; padding:11px 0; border-bottom:1px solid var(--border); }
-    .sched-row:last-child { border-bottom:none; }
-    .sched-time-col { min-width:74px; font-family:var(--mono); font-size:11px; color:var(--text3); line-height:1.6; }
-    .sched-dot { width:8px; height:8px; border-radius:50%; background:var(--border2); flex-shrink:0; margin-top:4px; }
-    .sched-dot.active { background:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); }
-    .sched-dot.done { background:var(--border); }
-    .sched-info { flex:1; }
-    .sched-name { font-size:14px; font-weight:700; margin-bottom:2px; }
-    .sched-teacher { font-size:12px; color:var(--text3); margin-bottom:2px; }
-    .sched-room { font-family:var(--mono); font-size:11px; color:var(--accent-text); }
-    .sched-row.done .sched-name, .sched-row.done .sched-room { color:var(--text3); }
-    .sched-row.active-row .sched-name { color:var(--accent-text); }
-
-    /* EDIT SCREEN */
-    .edit-screen { padding:16px; }
-    .edit-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-    .edit-title { font-size:18px; font-weight:800; }
-    .edit-tabs { display:flex; gap:6px; margin-bottom:16px; }
-    .edit-tab { flex:1; padding:9px; border:1px solid var(--border2); border-radius:10px; font-family:var(--display); font-size:12px; font-weight:700; cursor:pointer; background:transparent; color:var(--text3); text-align:center; transition:all .15s; }
-    .edit-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-    .add-btn { background:var(--accent); color:#fff; border:none; border-radius:10px; padding:9px 16px; font-family:var(--display); font-size:13px; font-weight:700; cursor:pointer; }
-
-    /* IMPORT SECTION */
-    .import-section { background:var(--surface2); border:1px dashed var(--border2); border-radius:12px; padding:14px 16px; margin-bottom:16px; display:flex; align-items:center; gap:12px; }
-    .import-section strong { display:block; font-size:13px; margin-bottom:1px; }
-    .import-section span { font-size:11px; color:var(--text2); font-family:var(--mono); }
-    .import-btn { background:var(--surface); border:1px solid var(--border2); color:var(--text2); border-radius:8px; padding:7px 12px; font-size:12px; font-weight:700; cursor:pointer; font-family:var(--display); flex-shrink:0; }
-
-    /* CLASS CARD (list view) */
-    .class-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:flex-start; gap:12px; }
-    .class-card-left { flex:1; }
-    .class-card-days { font-family:var(--mono); font-size:10px; color:var(--accent-text); font-weight:700; margin-bottom:4px; letter-spacing:.08em; }
-    .class-card-subject { font-size:15px; font-weight:800; margin-bottom:2px; }
-    .class-card-teacher { font-size:12px; color:var(--text2); margin-bottom:4px; font-weight:600; }
-    .class-card-meta { font-family:var(--mono); font-size:11px; color:var(--text3); }
-    .del-btn { width:30px; height:30px; background:var(--red-bg); border:none; color:var(--red); border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; flex-shrink:0; }
-
-    /* GRID VIEW */
-    .grid-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
-    .tt-grid { border-collapse:collapse; width:max-content; min-width:100%; font-size:11px; }
-    .tt-grid th { background:var(--grid-head); padding:8px 10px; font-family:var(--mono); font-weight:700; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text2); border:1px solid var(--border); white-space:nowrap; position:sticky; top:0; z-index:2; }
-    .tt-grid th:first-child { position:sticky; left:0; z-index:3; min-width:60px; }
-    .tt-grid td { background:var(--grid-cell); padding:0; border:1px solid var(--border); vertical-align:top; min-width:110px; }
-    .tt-grid td:first-child { background:var(--grid-head); padding:8px 10px; font-family:var(--mono); font-size:10px; color:var(--text3); white-space:nowrap; position:sticky; left:0; z-index:1; text-align:center; }
-    .grid-cell { padding:7px 8px; min-height:52px; }
-    .grid-cell.has-class { background:var(--grid-active); cursor:default; }
-    .grid-cell-subject { font-size:11px; font-weight:700; color:var(--accent-text); line-height:1.2; margin-bottom:3px; }
-    .grid-cell-room { font-family:var(--mono); font-size:10px; color:var(--text3); }
-    .grid-cell-teacher { font-size:10px; color:var(--text2); margin-top:1px; }
-
-    /* SHARE SCREEN */
-    .share-screen { padding:16px; }
-    .share-title { font-size:18px; font-weight:800; margin-bottom:4px; }
-    .share-sub { font-size:13px; color:var(--text2); font-family:var(--mono); margin-bottom:20px; }
-    .share-code-box { background:var(--surface); border:1px solid var(--border2); border-radius:12px; padding:14px 16px; font-family:var(--mono); font-size:12px; color:var(--text2); word-break:break-all; line-height:1.6; margin-bottom:16px; max-height:80px; overflow-y:auto; position:relative; }
-    .share-code-len { font-family:var(--mono); font-size:10px; color:var(--text3); margin-top:4px; margin-bottom:16px; }
-    .share-action { display:flex; align-items:center; gap:14px; background:var(--surface); border:1px solid var(--border2); border-radius:12px; padding:16px; cursor:pointer; margin-bottom:10px; transition:background .15s; }
-    .share-action:active { background:var(--surface2); }
-    .share-action-icon { font-size:22px; flex-shrink:0; }
-    .share-action-info { flex:1; }
-    .share-action-title { font-size:14px; font-weight:700; margin-bottom:2px; }
-    .share-action-sub { font-size:12px; color:var(--text2); font-family:var(--mono); }
-    .divider { font-size:11px; font-family:var(--mono); color:var(--text3); text-align:center; margin:16px 0; }
-    .import-paste { background:var(--surface); border:1px solid var(--border2); border-radius:12px; padding:12px; width:100%; font-family:var(--mono); font-size:12px; color:var(--text); resize:vertical; min-height:72px; margin-bottom:10px; outline:none; }
-    .import-paste:focus { border-color:var(--accent); }
-    .import-action-btn { width:100%; padding:13px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-family:var(--display); font-size:14px; font-weight:700; cursor:pointer; }
-
-    /* MODAL */
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); display:none; align-items:flex-end; justify-content:center; z-index:200; }
-    .modal-overlay.open { display:flex; }
-    .modal { background:var(--surface); border-radius:20px 20px 0 0; padding:24px 20px 36px; width:100%; max-width:430px; max-height:92vh; overflow-y:auto; }
-    .modal-handle { width:36px; height:4px; background:var(--border2); border-radius:2px; margin:0 auto 18px; }
-    .modal-title { font-size:20px; font-weight:800; margin-bottom:20px; }
-    .field { margin-bottom:14px; }
-    .field label { display:block; font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; font-family:var(--mono); color:var(--text2); margin-bottom:6px; }
-    .field input, .field select { width:100%; padding:11px 14px; background:var(--surface2); border:1px solid var(--border2); border-radius:10px; color:var(--text); font-family:var(--display); font-size:14px; font-weight:600; outline:none; -webkit-appearance:none; }
-    .field input:focus, .field select:focus { border-color:var(--accent); }
-    .field input[type=time] { font-family:var(--mono); }
-    .field input::placeholder { color:var(--text3); font-weight:400; }
-    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .day-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
-    .day-chip { padding:8px 4px; border:1px solid var(--border2); border-radius:8px; text-align:center; cursor:pointer; font-size:11px; font-family:var(--mono); font-weight:700; color:var(--text3); transition:all .15s; user-select:none; }
-    .day-chip.on { background:var(--accent); border-color:var(--accent); color:#fff; }
-    .alarm-field { display:flex; align-items:center; justify-content:space-between; background:var(--surface2); border:1px solid var(--border2); border-radius:10px; padding:12px 14px; }
-    .alarm-label { font-size:14px; font-weight:600; }
-    .alarm-sublabel { font-size:11px; color:var(--text2); font-family:var(--mono); margin-top:2px; }
-    .toggle { width:42px; height:24px; background:var(--border2); border-radius:12px; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
-    .toggle.on { background:var(--accent); }
-    .toggle::after { content:''; position:absolute; width:18px; height:18px; background:#fff; border-radius:50%; top:3px; left:3px; transition:transform .2s; }
-    .toggle.on::after { transform:translateX(18px); }
-    .copy-prev-btn { width:100%; padding:10px; background:var(--surface2); border:1px dashed var(--border2); border-radius:10px; color:var(--text2); font-family:var(--display); font-size:13px; font-weight:600; cursor:pointer; margin-bottom:14px; text-align:center; transition:all .15s; }
-    .copy-prev-btn:active { background:var(--accent-bg); color:var(--accent-text); }
-    .modal-btns { display:flex; gap:10px; margin-top:20px; }
-    .btn-cancel { flex:1; padding:13px; background:var(--surface2); color:var(--text2); border:none; border-radius:10px; font-family:var(--display); font-size:14px; font-weight:700; cursor:pointer; }
-    .btn-save { flex:2; padding:13px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-family:var(--display); font-size:14px; font-weight:700; cursor:pointer; }
-
-    /* NAV */
-    .bottom-nav { display:flex; border-top:1px solid var(--border); background:var(--nav-bg); position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; z-index:50; }
-    .nav-btn { flex:1; padding:12px 8px 14px; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; cursor:pointer; color:var(--text3); font-family:var(--display); font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; transition:color .15s; }
-    .nav-btn.active { color:var(--accent); }
-    .nav-icon { font-size:20px; line-height:1; }
-
-    .empty { text-align:center; padding:48px 24px; color:var(--text3); }
-    .empty-icon { font-size:40px; margin-bottom:12px; }
-    .empty p { font-size:14px; line-height:1.6; }
-    .toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--text); color:var(--bg); padding:10px 20px; border-radius:20px; font-size:13px; font-weight:700; opacity:0; transition:all .25s; pointer-events:none; z-index:300; white-space:nowrap; }
-    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-  </style>
 </head>
 <body class="dark">
 <div class="app">
@@ -777,7 +547,7 @@ document.getElementById('install-btn').onclick = async () => {
 };
 
 // ── SERVICE WORKER ──
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
 
 // ── INIT ──
 checkDeepLink();
