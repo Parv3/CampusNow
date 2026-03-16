@@ -22,6 +22,12 @@
       --display: 'Plus Jakarta Sans', sans-serif;
       --mono: 'DM Mono', monospace;
     }
+    <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log("Service Worker Registered"));
+}
+</script>
     body.dark {
       --bg:#0c1410; --surface:#131f18; --surface2:#1a2b22; --surface3:#213629;
       --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
