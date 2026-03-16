@@ -1,11 +1,11 @@
 const CACHE_NAME = "campusnow-cache-v1";
 
 const urlsToCache = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "/CampusNow/",
+  "/CampusNow/index.html",
+  "/CampusNow/manifest.json",
+  "/CampusNow/icons/icon-192.png",
+  "/CampusNow/icons/icon-512.png"
 ];
 
 self.addEventListener("install", event => {
