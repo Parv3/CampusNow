@@ -3,45 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>GLA Timetable</title>
-  <meta name="theme-color" content="#1a4731" id="theme-meta" />
+  <title>CampusNow | GLA Timetable</title>
+  <meta name="theme-color" content="#0c1410" id="theme-meta" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     :root { --display: 'Plus Jakarta Sans', sans-serif; --mono: 'DM Mono', monospace; }
-    body.dark { --bg:#0c1410; --surface:#131f18; --surface2:#1a2b22; --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13); --text:#e8f5ee; --text2:#8ab39a; --text3:#4a6b57; --accent:#4eba87; --accent-bg:rgba(78,186,135,0.12); --nav-bg:#0c1410; --red:#ff7070; --red-bg:rgba(255,112,112,0.12); }
-    body { font-family: var(--display); background:var(--bg); color:var(--text); min-height:100dvh; transition:background .3s; }
-    .app { max-width:430px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column; padding-bottom: 90px; }
+    
+    body.dark {
+      --bg:#0c1410; --surface:#131f18; --surface2:#1a2b22;
+      --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+      --text:#e8f5ee; --text2:#8ab39a; --text3:#4a6b57;
+      --accent:#4eba87; --accent-bg:rgba(78,186,135,0.12);
+      --nav-bg:#0c1410; --red:#ff7070; --red-bg:rgba(255,112,112,0.12);
+    }
 
-    /* UI Components */
-    .topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-bottom:1px solid var(--border); background:var(--bg); position:sticky; top:0; z-index:100; }
+    body { font-family: var(--display); background:var(--bg); color:var(--text); min-height:100dvh; transition: background .3s; overflow-x: hidden; }
+    .app { max-width:430px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column; position: relative; padding-bottom: 100px; }
+
+    /* TOPBAR RESTORATION */
+    .topbar { display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--border); background:var(--bg); position:sticky; top:0; z-index:100; }
     .topbar-uni { font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-family:var(--mono); cursor: pointer; }
-    .topbar-clock { font-family:var(--mono); font-size:22px; font-weight:500; }
-    .day-row { display:flex; gap:6px; padding:12px 16px; overflow-x:auto; border-bottom:1px solid var(--border); scrollbar-width:none; }
-    .day-pill { flex-shrink:0; padding:6px 13px; border-radius:20px; font-size:11px; font-weight:700; text-transform:uppercase; font-family:var(--mono); cursor:pointer; border:1px solid var(--border2); color:var(--text2); }
-    .day-pill.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-    .screen { display:none; flex:1; flex-direction:column; }
-    .screen.active { display:flex; }
-    .now-card { background:var(--surface); border:1px solid var(--border2); border-radius:16px; padding:20px; margin:16px; position:relative; overflow:hidden; }
-    .now-subject { font-size:26px; font-weight:800; line-height:1.1; margin-bottom:8px; }
-    .sec-label { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; font-family:var(--mono); color:var(--text3); margin: 16px 16px 8px; }
-    .class-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin:0 16px 10px; display:flex; align-items:center; gap:12px; }
-    .del-btn { width:32px; height:32px; background:var(--red-bg); border:none; color:var(--red); border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .topbar-date { font-size:13px; font-weight:600; color:var(--text2); display: block; margin-top: 2px; }
+    .topbar-clock { font-family:var(--mono); font-size:22px; font-weight:500; letter-spacing: -0.02em; }
 
-    /* Fixed Navigation */
-    .bottom-nav { display: flex; border-top: 1px solid var(--border); background: var(--nav-bg); position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; z-index: 9999; padding-bottom: env(safe-area-inset-bottom, 15px); padding-top: 10px; }
-    .nav-btn { flex:1; padding:8px; display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; cursor:pointer; color:var(--text3); }
+    /* DAY PILLS RESTORATION */
+    .day-row { display:flex; gap:8px; padding:16px; overflow-x:auto; border-bottom:1px solid var(--border); scrollbar-width:none; }
+    .day-row::-webkit-scrollbar { display: none; }
+    .day-pill { flex-shrink:0; padding:8px 16px; border-radius:20px; font-size:11px; font-weight:700; text-transform:uppercase; font-family:var(--mono); cursor:pointer; border:1px solid var(--border2); color:var(--text2); transition: all 0.2s; }
+    .day-pill.active { background:var(--accent); border-color:var(--accent); color:#fff; transform: scale(1.05); }
+
+    .sec-label { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; font-family:var(--mono); color:var(--text3); margin: 24px 20px 12px; }
+
+    /* NOW CARD RESTORATION */
+    .now-card { background:var(--surface); border:1px solid var(--border2); border-radius:20px; padding:24px; margin:0 16px; position:relative; overflow:hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .now-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--accent); }
+    .now-subject { font-size:28px; font-weight:800; line-height:1.05; margin-bottom:8px; letter-spacing: -0.03em; }
+    .now-location { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-bg); color: var(--accent); font-family: var(--mono); font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; margin-top: 12px; }
+
+    .sched-row { display:flex; gap:16px; padding:16px 20px; border-bottom:1px solid var(--border); align-items: flex-start; }
+    .sched-time { font-family: var(--mono); font-size: 11px; color: var(--text3); min-width: 65px; line-height: 1.5; }
+    .sched-info strong { font-size: 15px; font-weight: 700; display: block; margin-bottom: 2px; }
+    .sched-info span { font-size: 12px; color: var(--text2); }
+
+    /* BOTTOM NAV RESTORATION */
+    .bottom-nav { display: flex; border-top: 1px solid var(--border); background: var(--nav-bg); position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; z-index: 9999; padding-bottom: env(safe-area-inset-bottom, 20px); padding-top: 12px; }
+    .nav-btn { flex:1; padding:8px; display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; cursor:pointer; color:var(--text3); transition: color 0.2s; }
     .nav-btn.active { color:var(--accent); }
-    .nav-icon { font-size:22px; font-weight: bold; }
-    .nav-text { font-size:10px; font-weight:700; text-transform:uppercase; }
+    .nav-icon { font-size:20px; font-weight: 800; }
+    .nav-text { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing: 0.05em; }
 
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; align-items:flex-end; justify-content:center; z-index:10000; }
+    /* ADMIN TOOLS */
+    .admin-box { background: var(--surface2); padding: 16px; border-radius: 16px; margin: 16px; border: 1px dashed var(--accent); display: none; }
+    .class-card { background:var(--surface); border:1px solid var(--border2); border-radius:16px; padding:16px; margin:0 16px 12px; display:flex; align-items:center; gap:12px; }
+    .del-btn { width:36px; height:36px; background:var(--red-bg); border:none; color:var(--red); border-radius:10px; cursor:pointer; font-weight: bold; }
+
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none; align-items:flex-end; justify-content:center; z-index:10000; backdrop-filter: blur(4px); }
     .modal-overlay.open { display:flex; }
-    .modal { background:var(--surface); border-radius:20px 20px 0 0; padding:24px; width:100%; max-width:430px; }
-    .toast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:var(--text); color:var(--bg); padding:10px 20px; border-radius:20px; font-size:13px; font-weight:700; opacity:0; transition:all .25s; pointer-events:none; z-index:10001; }
-    .toast.show { opacity:1; }
+    .modal { background:var(--surface); border-radius:24px 24px 0 0; padding:24px 24px 40px; width:100%; max-width:430px; }
+    input, select { width: 100%; padding: 14px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 12px; color: var(--text); font-family: var(--display); margin-bottom: 12px; outline: none; }
+    
+    .toast { position:fixed; bottom:110px; left:50%; transform:translateX(-50%); background:var(--text); color:var(--bg); padding:12px 24px; border-radius:30px; font-size:13px; font-weight:800; opacity:0; transition:all .3s; pointer-events:none; z-index:10001; }
+    .toast.show { opacity:1; transform: translateX(-50%) translateY(-10px); }
   </style>
 </head>
 
@@ -50,40 +75,38 @@
   <div class="topbar">
     <div class="topbar-left">
       <span class="topbar-uni">GLA University</span>
-      <span class="topbar-date" id="topbar-date">Loading...</span>
+      <span class="topbar-date" id="topbar-date">Monday, 16 Mar</span>
     </div>
     <div class="topbar-right"><span class="topbar-clock" id="clock">00:00</span></div>
   </div>
 
-  <div id="screen-home" class="screen active">
+  <div class="screen active" id="screen-home">
     <div class="day-row" id="day-row"></div>
     <div class="sec-label">Right now</div>
-    <div class="now-card" id="now-card"><div>Loading schedule...</div></div>
-    <div class="sec-label">Full schedule</div>
+    <div id="now-card"></div>
+    <div class="sec-label">Schedule</div>
     <div id="schedule-list"></div>
   </div>
 
-  <div id="screen-edit" class="screen">
-    <div style="padding:16px">
-      <div style="display:flex; justify-content:space-between; margin-bottom:16px">
-        <span style="font-size:20px; font-weight:800">Manage</span>
-        <button onclick="openModal()" style="padding:10px 20px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-weight:700">+ Add</button>
-      </div>
-      <div style="background:var(--surface2); padding:16px; border-radius:12px; margin-bottom:16px; border:1px solid var(--border)">
-        <strong>Global Sync</strong>
-        <div style="display:flex; gap:10px; margin-top:10px">
-          <button onclick="if(confirm('Load Cloud schedule?')) saveC(DEFAULT_TT)" style="flex:1; padding:10px; border-radius:8px; background:var(--surface); color:var(--text2); border:1px solid var(--border2)">Load</button>
-          <button id="admin-push-btn" style="display:none; flex:1; padding:10px; background:var(--accent-bg); color:var(--accent); border:1px solid var(--accent); border-radius:8px; font-weight:700">Push Global</button>
-        </div>
-      </div>
-      <div id="list-view"></div>
+  <div class="screen" id="screen-edit">
+    <div class="sec-label">Manage Timetable</div>
+    <button onclick="openModal()" style="margin: 0 16px 16px; padding: 16px; background: var(--accent); color: #fff; border: none; border-radius: 16px; font-weight: 800; font-size: 15px; cursor: pointer;">+ Add New Class</button>
+    
+    <div id="admin-push-box" class="admin-box">
+      <strong style="display: block; margin-bottom: 4px;">Admin Mode</strong>
+      <p style="font-size: 11px; color: var(--text2); margin-bottom: 12px;">You are logged in. Push local changes to all students.</p>
+      <button id="admin-push-btn" style="width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-weight: 700;">Push to Cloud</button>
     </div>
+
+    <div id="list-view"></div>
   </div>
 
-  <div id="screen-share" class="screen">
-    <div style="padding:24px">
-      <h2>Share Code</h2>
-      <div id="share-code-box" style="background:var(--surface); padding:16px; border-radius:12px; word-break:break-all; font-family:var(--mono); font-size:12px; border:1px solid var(--border2); margin:16px 0">Add classes first.</div>
+  <div class="screen" id="screen-share">
+    <div class="sec-label">Transfer Data</div>
+    <div style="padding: 0 20px;">
+      <div id="share-code-box" style="background:var(--surface); padding:20px; border-radius:16px; word-break:break-all; font-family:var(--mono); font-size:12px; border:1px solid var(--border2); margin-bottom: 20px;">Add classes first.</div>
+      <textarea id="import-paste" style="width:100%; padding:16px; border-radius:16px; background:var(--surface2); color:var(--text); border: 1px solid var(--border2); height:120px; outline: none;" placeholder="Paste code here..."></textarea>
+      <button id="import-action-btn" style="width:100%; padding:16px; background:var(--accent); color:#fff; border:none; border-radius:16px; margin-top:16px; font-weight: 800;">Import Timetable</button>
     </div>
   </div>
 
@@ -96,19 +119,20 @@
 
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <input type="text" id="f-subject" placeholder="Subject" style="width:100%; padding:14px; margin-bottom:12px; border-radius:10px; background:var(--surface2); color:var(--text); border:1px solid var(--border2)">
+    <h3 style="margin-bottom: 20px; font-weight: 800;">Add / Edit Class</h3>
+    <input type="text" id="f-subject" placeholder="Subject Name">
     <div style="display:flex; gap:12px">
-        <input type="text" id="f-block" placeholder="Block" style="flex:1; padding:14px; border-radius:10px; background:var(--surface2); color:var(--text); border:1px solid var(--border2)">
-        <input type="text" id="f-room" placeholder="Room" style="flex:1; padding:14px; border-radius:10px; background:var(--surface2); color:var(--text); border:1px solid var(--border2)">
+        <input type="text" id="f-block" placeholder="Block">
+        <input type="text" id="f-room" placeholder="Room">
     </div>
-    <div style="display:flex; gap:12px; margin-top:12px">
-        <input type="time" id="f-start" style="flex:1; padding:14px; border-radius:10px; background:var(--surface2); color:var(--text); border:1px solid var(--border2)">
-        <input type="time" id="f-end" style="flex:1; padding:14px; border-radius:10px; background:var(--surface2); color:var(--text); border:1px solid var(--border2)">
-    </div>
-    <div id="day-chips" class="day-row" style="border:none; padding:20px 0"></div>
     <div style="display:flex; gap:12px">
-        <button onclick="closeModal()" style="flex:1; padding:14px; border-radius:10px; background:var(--surface2); border:none; color:var(--text2)">Cancel</button>
-        <button onclick="saveClass()" style="flex:2; padding:14px; border-radius:10px; background:var(--accent); color:#fff; border:none; font-weight:800">Save</button>
+        <input type="time" id="f-start">
+        <input type="time" id="f-end">
+    </div>
+    <div id="day-chips" class="day-row" style="border:none; padding: 10px 0 20px;"></div>
+    <div style="display:flex; gap:12px">
+        <button onclick="closeModal()" style="flex:1; padding:16px; border-radius:12px; background:var(--surface2); color:var(--text2); border:none; font-weight: 700;">Cancel</button>
+        <button onclick="saveClass()" style="flex:2; padding:16px; border-radius:12px; background:var(--accent); color:#fff; border:none; font-weight: 800;">Save Class</button>
     </div>
   </div>
 </div>
@@ -117,55 +141,93 @@
 
 <script>
 const DAYS_S = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DAYS_F = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
 const loadC = () => JSON.parse(localStorage.getItem('gla_v2') || '[]');
 const saveC = d => { localStorage.setItem('gla_v2', JSON.stringify(d)); renderHome(); renderEditor(); };
-const toM = t => { const [h,m]=t.split(':').map(Number); return h*60+m; };
+const toM = t => { if(!t) return 0; const [h,m]=t.split(':').map(Number); return h*60+m; };
 const fmt12 = t => { if(!t) return '--'; const [h,m]=t.split(':').map(Number); return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`; };
+
 let selectedDays = [], viewDay = (new Date().getDay()+6)%7;
 
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+
 function goScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(`screen-${name}`).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach((b,i)=> b.classList.toggle('active', ['home','edit','share'][i]===name));
+  if(name==='home') renderHome();
 }
+
 function renderDayRow() {
   document.getElementById('day-row').innerHTML = DAYS_S.map((d,i) => `<div class="day-pill ${i===viewDay?'active':''}" onclick="viewDay=${i};renderDayRow();renderHome();">${d}</div>`).join('');
 }
+
 function renderHome() {
   const dc = loadC().filter(c=>c.days.includes(viewDay)).sort((a,b)=>toM(a.start)-toM(b.start));
   const nm = (new Date().getHours()*60) + new Date().getMinutes();
   const curr = dc.find(c=>toM(c.start)<=nm && nm<toM(c.end));
-  document.getElementById('now-card').innerHTML = curr ? `<div class="now-subject">${curr.subject}</div><div>${curr.block} · Room ${curr.room}</div>` : 'Free';
-  document.getElementById('schedule-list').innerHTML = dc.map(c => `<div class="sched-row" style="display:flex; gap:16px; padding:14px 0; border-bottom:1px solid var(--border)"><div style="font-family:monospace; font-size:11px; min-width:65px">${fmt12(c.start)}</div><div><strong>${c.subject}</strong><br><small>${c.block} · ${c.room}</small></div></div>`).join('');
+  
+  const card = document.getElementById('now-card');
+  card.innerHTML = curr ? `
+    <div class="now-card">
+      <div class="now-subject">${curr.subject}</div>
+      <div style="color: var(--text2); font-weight: 600;">${curr.teacher || 'GLA Faculty'}</div>
+      <div class="now-location">${curr.block} · Room ${curr.room}</div>
+      <div style="font-family: var(--mono); margin-top:16px; color: var(--text3); font-size: 12px;">${fmt12(curr.start)} - ${fmt12(curr.end)}</div>
+    </div>` : `<div class="now-card"><div class="now-subject">Free Time</div><div style="color: var(--text2);">No classes scheduled right now.</div></div>`;
+
+  document.getElementById('schedule-list').innerHTML = dc.map(c => `
+    <div class="sched-row">
+      <div class="sched-time">${fmt12(c.start)}<br>${fmt12(c.end)}</div>
+      <div class="sched-info"><strong>${c.subject}</strong><span>${c.block} · Room ${c.room}</span></div>
+    </div>`).join('');
 }
+
 function renderEditor() {
-  document.getElementById('list-view').innerHTML = loadC().map((c,i) => `<div class="class-card"><div style="flex:1"><small>${c.days.map(d=>DAYS_S[d]).join(' ')}</small><br><strong>${c.subject}</strong></div><button class="del-btn" onclick="editClass(${i})" style="background:var(--accent-bg); color:var(--accent); margin-right:8px">✎</button><button class="del-btn" onclick="delClass(${i})">✕</button></div>`).join('');
+  document.getElementById('list-view').innerHTML = loadC().map((c,i) => `
+    <div class="class-card">
+      <div style="flex:1">
+        <div style="font-size:9px; color:var(--accent); font-weight:800; margin-bottom:4px;">${c.days.map(d=>DAYS_S[d]).join(' ')}</div>
+        <strong>${c.subject}</strong><br><span style="font-size:12px; color:var(--text2)">${c.block} · ${c.room}</span>
+      </div>
+      <button class="del-btn" onclick="editClass(${i})" style="background:var(--accent-bg); color:var(--accent); margin-right:8px">✎</button>
+      <button class="del-btn" onclick="delClass(${i})">✕</button>
+    </div>`).join('');
 }
+
 window.editClass = i => {
     const c = loadC()[i];
-    ['f-subject','f-block','f-room','f-start','f-end'].forEach(id => document.getElementById(id).value = c[id.split('-')[1]]);
+    ['f-subject','f-block','f-room','f-start','f-end'].forEach(id => document.getElementById(id).value = c[id.split('-')[1]] || '');
     selectedDays = [...c.days]; buildChips();
     const a = loadC(); a.splice(i,1); saveC(a);
     document.getElementById('modal').classList.add('open');
 };
-function delClass(i) { const a=loadC(); a.splice(i,1); saveC(a); }
+
+function delClass(i) { if(confirm('Delete?')) { const a = loadC(); a.splice(i,1); saveC(a); } }
+
 function buildChips() {
-  document.getElementById('day-chips').innerHTML = DAYS_S.map((d,i)=> `<div class="day-chip" style="padding:8px; border:1px solid var(--border2); border-radius:8px; margin-right:5px; cursor:pointer; background:${selectedDays.includes(i)?'var(--accent)':'none'}" onclick="toggleChip(${i})">${d}</div>`).join('');
+  document.getElementById('day-chips').innerHTML = DAYS_S.map((d,i)=> `<div class="day-chip" style="padding:10px 14px; border:1px solid ${selectedDays.includes(i)?'var(--accent)':'var(--border2)'}; border-radius:10px; margin-right:8px; cursor:pointer; background:${selectedDays.includes(i)?'var(--accent)':'none'}; color:${selectedDays.includes(i)?'#fff':'var(--text2)'}; font-size:11px; font-weight:700;" onclick="toggleChip(${i})">${d}</div>`).join('');
 }
 function toggleChip(i) { selectedDays.includes(i) ? selectedDays=selectedDays.filter(d=>d!==i) : selectedDays.push(i); buildChips(); }
 function openModal() { selectedDays=[]; buildChips(); document.getElementById('modal').classList.add('open'); }
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
 function saveClass() {
-  const vals = ['f-subject','f-block','f-room','f-start','f-end'].map(id=>document.getElementById(id).value);
-  if(!vals[0] || !selectedDays.length) return alert("Missing data");
-  const a=loadC(); a.push({subject:vals[0], block:vals[1], room:vals[2], start:vals[3], end:vals[4], days:selectedDays});
+  const v = ['f-subject','f-block','f-room','f-start','f-end'].map(id=>document.getElementById(id).value);
+  if(!v[0] || !selectedDays.length) return alert("Subject & Days required");
+  const a=loadC(); a.push({subject:v[0], block:v[1], room:v[2], start:v[3], end:v[4], days:selectedDays});
   saveC(a); closeModal();
 }
-renderDayRow(); renderHome(); setInterval(()=> {
-    const n = new Date();
-    document.getElementById('clock').textContent = `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
-}, 1000);
+
+function updateClock() {
+  const n = new Date();
+  document.getElementById('clock').textContent = `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('topbar-date').textContent = `${DAYS_F[(n.getDay()+6)%7].slice(0,3)}, ${n.getDate()} ${MONTHS[n.getMonth()]}`;
+}
+
+renderDayRow(); renderHome(); updateClock(); setInterval(updateClock, 10000);
 </script>
 
 <script type="module">
@@ -183,11 +245,13 @@ const timetableRef = doc(db, "timetables", "gla_v2");
 let taps = 0;
 document.querySelector('.topbar-uni').onclick = async () => {
     if (++taps === 10) {
-        const res = await signInWithPopup(auth, provider);
-        if (res.user.email === "parvmishra44@gmail.com") {
-            document.getElementById('admin-push-btn').style.display = 'block';
-            showToast("Admin Mode 🔓");
-        }
+        try {
+            const res = await signInWithPopup(auth, provider);
+            if (res.user.email === "parvmishra44@gmail.com") {
+                document.getElementById('admin-push-box').style.display = 'block';
+                showToast("Admin Mode 🔓");
+            }
+        } catch (e) { console.error(e); }
         taps = 0;
     }
 };
@@ -198,7 +262,7 @@ document.getElementById('admin-push-btn').onclick = async () => {
     const payload = { version: Date.now() };
     dayMap.forEach((day, idx) => payload[day] = classes.filter(c => c.days.includes(idx)).map(({days, ...rest}) => rest));
     await updateDoc(timetableRef, payload);
-    alert("Cloud Updated!");
+    showToast("Global Schedule Updated! 🚀");
 };
 
 onSnapshot(timetableRef, (docSnap) => {
