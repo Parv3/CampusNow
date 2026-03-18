@@ -200,7 +200,19 @@
     .btn-save { flex:2; padding:13px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-family:var(--display); font-size:14px; font-weight:700; cursor:pointer; }
 
     /* NAV */
-    .bottom-nav { display:flex; border-top:1px solid var(--border); background:var(--nav-bg); position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; z-index:50; }
+    .bottom-nav { 
+  display: flex; 
+  border-top: 1px solid var(--border); 
+  background: var(--nav-bg); 
+  position: fixed; 
+  bottom: 0; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  width: 100%; 
+  max-width: 430px; 
+  z-index: 9999; /* Higher than everything else */
+  padding-bottom: env(safe-area-inset-bottom); /* Fix for modern phone notches */
+}
     .nav-btn { flex:1; padding:12px 8px 14px; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; cursor:pointer; color:var(--text3); font-family:var(--display); font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; transition:color .15s; }
     .nav-btn.active { color:var(--accent); }
     .nav-icon { font-size:20px; line-height:1; }
