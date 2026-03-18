@@ -785,7 +785,8 @@ window.onSnapshot(timetableRef, (docSnap) => {
   const oldVersion = localStorage.getItem("version");
 
   if (oldVersion != data.version) {
-    alert("New timetable update available");
+    document.getElementById("install-banner").innerText = "📢 New timetable updated!";
+document.getElementById("install-banner").classList.add("show");
 
     // Save new version
     localStorage.setItem("version", data.version);
