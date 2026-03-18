@@ -752,12 +752,12 @@ updateClock();
 scheduleAlarms();
 setInterval(()=>{ updateClock(); renderHome(); }, 30000);
 setInterval(scheduleAlarms, 3600000);
-</script>
-   <script type="module">
+  </script>
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyB2dbYAjTvozbeR93_cYf7R99OIwpZuKFw",
   authDomain: "campusnow-6f52a.firebaseapp.com",
@@ -767,39 +767,53 @@ const firebaseConfig = {
   appId: "1:1071603068850:web:fe1a6570df8eacb5447eab",
   measurementId: "G-M9GW59JSBE"
 };
+
+// Init
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// make global
-window.db = db;
-window.firebaseDoc = doc;
-window.onSnapshot = onSnapshot;
-</script>
-  <script type="module">
-const timetableRef = window.firebaseDoc(window.db, "timetables", "default");
+// 🔥 Listener
+const timetableRef = doc(db, "timetables", "default");
 
-window.onSnapshot(timetableRef, (docSnap) => {
-  if (!docSnap.exists()) return;
+console.log("🔥 Firebase listener started");
+
+onSnapshot(timetableRef, (docSnap) => {
+  console.log("📡 Snapshot triggered");
+
+  if (!docSnap.exists()) {
+    console.log("❌ No document found");
+    return;
+  }
 
   const data = docSnap.data();
   const oldVersion = localStorage.getItem("version");
 
+  console.log("Old:", oldVersion);
+  console.log("New:", data.version);
+
   if (oldVersion != data.version) {
-    document.getElementById("install-banner").innerText = "📢 New timetable updated!";
-document.getElementById("install-banner").classList.add("show");
+    const banner = document.getElementById("install-banner");
+
+    banner.innerHTML = `
+      <div style="flex:1">
+        <strong>📢 New timetable available</strong>
+        <span>Tap to refresh</span>
+      </div>
+      <button class="install-btn" onclick="location.reload()">Update</button>
+    `;
+
+    banner.classList.add("show");
 
     // Save new version
     localStorage.setItem("version", data.version);
 
-    // 🔥 Save new timetable
+    // Save timetable
     localStorage.setItem("gla_v2", JSON.stringify(data.schedule));
 
-    console.log("Updated timetable:", data.schedule);
-
-    // 🔄 Reload UI
-    location.reload();
+    console.log("✅ Timetable updated");
   }
 });
 </script>
+
 </body>
 </html>
