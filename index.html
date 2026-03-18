@@ -757,7 +757,6 @@ setInterval(scheduleAlarms, 3600000);
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyB2dbYAjTvozbeR93_cYf7R99OIwpZuKFw",
   authDomain: "campusnow-6f52a.firebaseapp.com",
@@ -768,57 +767,66 @@ const firebaseConfig = {
   measurementId: "G-M9GW59JSBE"
 };
 
-// Init
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔥 Listener
+// Use the correct document ID "gla_v2"
 const timetableRef = doc(db, "timetables", "gla_v2");
 
-console.log("🔥 Firebase listener started");
-console.log("Using path:", "timetables/gla_v2");
-onSnapshot(timetableRef, (docSnap) => {
-  console.log("📡 Snapshot triggered");
-  console.log(docSnap.exists());
+console.log("🔥 Firebase listener active on: timetables/gla_v2");
 
+onSnapshot(timetableRef, (docSnap) => {
   if (!docSnap.exists()) {
-    console.log("❌ No document found");
+    console.error("❌ Firestore Document Not Found");
     return;
   }
 
   const data = docSnap.data();
   const oldVersion = localStorage.getItem("version");
+  const serverVersion = String(data.version || "0");
 
-  console.log("Old:", oldVersion);
-  console.log("New:", data.version);
+  if (oldVersion !== serverVersion) {
+    console.log(`📡 Update detected: v${oldVersion} -> v${serverVersion}`);
 
- if (oldVersion != data.version) {
-  const banner = document.getElementById("install-banner");
+    // Map Firestore keys to app indices (0=Mon, 6=Sun)
+    const dayMap = { mon: 0, tue: 1, wed: 2, thu: 3, fri: 4, sat: 5, sun: 6 };
+    let flatSchedule = [];
 
-  banner.innerHTML = `
-    <div style="flex:1">
-      <strong>📢 New timetable available</strong>
-      <span>Tap to refresh</span>
-    </div>
-    <button class="install-btn" onclick="location.reload()">Update</button>
-  `;
+    // Flatten Map structure into the Array structure your app expects
+    Object.keys(data).forEach(key => {
+      const dayIdx = dayMap[key.toLowerCase()];
+      if (dayIdx !== undefined && Array.isArray(data[key])) {
+        const processed = data[key].map(cls => ({
+          ...cls,
+          days: [dayIdx] // Inject the day index so getForDay() works
+        }));
+        flatSchedule = [...flatSchedule, ...processed];
+      }
+    });
 
-  banner.classList.add("show");
+    // 1. Update Local Storage
+    localStorage.setItem("version", serverVersion);
+    localStorage.setItem("gla_v2", JSON.stringify(flatSchedule));
 
-  // Save new version
-  localStorage.setItem("version", data.version);
+    // 2. Update UI Banner
+    const banner = document.getElementById("install-banner");
+    banner.innerHTML = `
+      <div style="flex:1">
+        <strong>📢 Timetable Updated (v${serverVersion})</strong>
+        <span>Syncing latest schedule...</span>
+      </div>
+      <button class="install-btn" onclick="this.parentElement.classList.remove('show')">Got it</button>
+    `;
+    banner.classList.add("show");
 
-  // Save timetable
-  localStorage.setItem("gla_v2", JSON.stringify(data.schedule));
-
-  // 🔥 THIS WAS MISSING
-  renderHome();
-  renderEditor();
-  scheduleAlarms();
-
-  console.log("✅ Timetable updated");
-}
-  });
+    // 3. Refresh UI instantly (No reload needed)
+    if (typeof renderHome === "function") renderHome();
+    if (typeof renderEditor === "function") renderEditor();
+    if (typeof scheduleAlarms === "function") scheduleAlarms();
+    
+    console.log("✅ Sync Complete");
+  }
+});
 </script>
 
 </body>
