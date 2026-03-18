@@ -776,23 +776,27 @@ window.firebaseDoc = doc;
 window.onSnapshot = onSnapshot;
 </script>
   <script type="module">
-const timetableRef = firebaseDoc(db, "timetables", "default");
+const timetableRef = window.firebaseDoc(window.db, "timetables", "default");
 
-onSnapshot(timetableRef, (docSnap) => {
+window.onSnapshot(timetableRef, (docSnap) => {
   if (!docSnap.exists()) return;
 
   const data = docSnap.data();
-
   const oldVersion = localStorage.getItem("version");
 
   if (oldVersion != data.version) {
     alert("New timetable update available");
 
+    // Save new version
     localStorage.setItem("version", data.version);
 
-    console.log("New timetable:", data.schedule);
+    // 🔥 Save new timetable
+    localStorage.setItem("gla_v2", JSON.stringify(data.schedule));
 
-    // 👉 update your UI here
+    console.log("Updated timetable:", data.schedule);
+
+    // 🔄 Reload UI
+    location.reload();
   }
 });
 </script>
