@@ -779,6 +779,7 @@ console.log("🔥 Firebase listener started");
 console.log("Using path:", "timetables/gla_v2");
 onSnapshot(timetableRef, (docSnap) => {
   console.log("📡 Snapshot triggered");
+  console.log(docSnap.exists());
 
   if (!docSnap.exists()) {
     console.log("❌ No document found");
