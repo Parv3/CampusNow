@@ -271,18 +271,17 @@
         <button class="edit-tab active" id="tab-grid" onclick="switchEditTab('grid')">Grid View</button>
         <button class="edit-tab" id="tab-list" onclick="switchEditTab('list')">List View</button>
       </div>
-      <div class="import-section">
-        <div style="font-size:22px;flex-shrink:0">📋</div>
-        <div style="flex:1">
-          <strong>Load default timetable</strong>
-          <span>Pre-loaded GLA schedule</span>
-        </div>
-        <button class="import-btn" id="load-default-btn">Load</button>
-      </div>
-      <div id="grid-view"></div>
-      <div id="list-view" style="display:none"></div>
-    </div>
+<div class="import-section">
+  <div style="font-size:22px;flex-shrink:0">📋</div>
+  <div style="flex:1">
+    <strong>Global Timetable</strong>
+    <span>Control what everyone sees</span>
   </div>
+  <div style="display:flex; flex-direction:column; gap:5px">
+    <button class="import-btn" id="load-default-btn">Load</button>
+    <button class="import-btn" id="admin-push-btn" style="background:var(--accent-bg); color:var(--accent); border-color:var(--accent)">Push to Firebase</button>
+  </div>
+</div>
 
   <!-- SHARE -->
   <div class="screen" id="screen-share">
@@ -591,7 +590,10 @@ function renderListView() {
         ${c.teacher?`<div class="class-card-teacher">${c.teacher}</div>`:''}
         <div class="class-card-meta">${c.block} · Room ${c.room} &nbsp;|&nbsp; ${fmt12(c.start)} – ${fmt12(c.end)}${c.alarm?' 🔔':''}</div>
       </div>
-      <button class="del-btn" onclick="delClass(${i})">✕</button>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button class="del-btn" style="background:var(--accent-bg); color:var(--accent);" onclick="editClass(${i})">✎</button>
+        <button class="del-btn" onclick="delClass(${i})">✕</button>
+      </div>
     </div>`).join('');
 }
 
@@ -652,6 +654,35 @@ function copyPrevious() {
   if (prev.alarm) document.getElementById('alarm-toggle').classList.add('on');
   showToast('Previous class data copied!');
 }
+window.editClass = function(index) {
+  const classes = loadC();
+  const c = classes[index];
+  
+  // 1. Pre-fill the modal input fields
+  document.getElementById('f-subject').value = c.subject;
+  document.getElementById('f-block').value = c.block;
+  document.getElementById('f-room').value = c.room;
+  document.getElementById('f-teacher').value = c.teacher || '';
+  document.getElementById('f-start').value = c.start;
+  document.getElementById('f-end').value = c.end;
+  
+  // 2. Set the day chips
+  selectedDays = [...c.days];
+  buildChips(); // Resets the UI
+  document.querySelectorAll('.day-chip').forEach(chip => {
+    if (selectedDays.includes(parseInt(chip.dataset.i))) {
+      chip.classList.add('on');
+    }
+  });
+
+  // 3. Temporarily remove the old class so when you click "Save", it replaces it
+  const a = loadC();
+  a.splice(index, 1);
+  saveC(a);
+  
+  // 4. Show the modal
+  document.getElementById('modal').classList.add('open');
+};
 
 function saveClass() {
   const subject = document.getElementById('f-subject').value.trim();
@@ -755,7 +786,7 @@ setInterval(scheduleAlarms, 3600000);
   </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB2dbYAjTvozbeR93_cYf7R99OIwpZuKFw",
@@ -769,64 +800,103 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-// Use the correct document ID "gla_v2"
 const timetableRef = doc(db, "timetables", "gla_v2");
 
-console.log("🔥 Firebase listener active on: timetables/gla_v2");
+// --- ADMIN PUSH FUNCTION ---
+window.pushToFirestore = async () => {
+    const localClasses = JSON.parse(localStorage.getItem('gla_v2') || '[]');
+    if (localClasses.length === 0) return alert("No classes found to push!");
 
+    const confirmPush = confirm(`Push ${localClasses.length} classes to the Global Timetable? This updates it for EVERYONE.`);
+    if (!confirmPush) return;
+
+    // Structure the data back for Firestore (un-flattening)
+    const dayMap = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const payload = {
+        version: Date.now(), // New version based on timestamp
+        mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []
+    };
+
+    localClasses.forEach(c => {
+        const { days, ...classData } = c; // separate days from the rest
+        c.days.forEach(dayIdx => {
+            const dayKey = dayMap[dayIdx];
+            if (dayKey) payload[dayKey].push(classData);
+        });
+    });
+
+    try {
+        await updateDoc(timetableRef, payload);
+        alert("✅ Success! Global Timetable Updated.");
+    } catch (e) {
+        console.error(e);
+        alert("❌ Error: Check Firebase Rules or Console.");
+    }
+};
+
+document.getElementById('admin-push-btn').onclick = window.pushToFirestore;
+
+// --- LISTENER (Your existing code) ---
 onSnapshot(timetableRef, (docSnap) => {
-  if (!docSnap.exists()) {
-    console.error("❌ Firestore Document Not Found");
-    return;
-  }
-
+  if (!docSnap.exists()) return;
   const data = docSnap.data();
   const oldVersion = localStorage.getItem("version");
   const serverVersion = String(data.version || "0");
 
   if (oldVersion !== serverVersion) {
-    console.log(`📡 Update detected: v${oldVersion} -> v${serverVersion}`);
-
-    // Map Firestore keys to app indices (0=Mon, 6=Sun)
     const dayMap = { mon: 0, tue: 1, wed: 2, thu: 3, fri: 4, sat: 5, sun: 6 };
     let flatSchedule = [];
 
-    // Flatten Map structure into the Array structure your app expects
     Object.keys(data).forEach(key => {
       const dayIdx = dayMap[key.toLowerCase()];
       if (dayIdx !== undefined && Array.isArray(data[key])) {
-        const processed = data[key].map(cls => ({
-          ...cls,
-          days: [dayIdx] // Inject the day index so getForDay() works
-        }));
+        const processed = data[key].map(cls => ({ ...cls, days: [dayIdx] }));
         flatSchedule = [...flatSchedule, ...processed];
       }
     });
 
-    // 1. Update Local Storage
     localStorage.setItem("version", serverVersion);
     localStorage.setItem("gla_v2", JSON.stringify(flatSchedule));
 
-    // 2. Update UI Banner
     const banner = document.getElementById("install-banner");
     banner.innerHTML = `
       <div style="flex:1">
         <strong>📢 Timetable Updated (v${serverVersion})</strong>
-        <span>Syncing latest schedule...</span>
+        <span>Latest official schedule synced.</span>
       </div>
       <button class="install-btn" onclick="this.parentElement.classList.remove('show')">Got it</button>
     `;
     banner.classList.add("show");
 
-    // 3. Refresh UI instantly (No reload needed)
     if (typeof renderHome === "function") renderHome();
     if (typeof renderEditor === "function") renderEditor();
     if (typeof scheduleAlarms === "function") scheduleAlarms();
-    
-    console.log("✅ Sync Complete");
   }
 });
+  import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// Secret Admin Activation
+let tapCount = 0;
+document.querySelector('.topbar-uni').onclick = async () => {
+    tapCount++;
+    if (tapCount === 10) {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            if (result.user.email === "parvmishra44@gmail.com") {
+                document.getElementById('admin-push-btn').style.display = 'block';
+                showToast("Admin Mode: Unlocked 🔓");
+            } else {
+                showToast("Access Denied: Not an Admin");
+            }
+        } catch (error) {
+            console.error("Login failed", error);
+        }
+        tapCount = 0;
+    }
+};
 </script>
 
 </body>
