@@ -791,28 +791,33 @@ onSnapshot(timetableRef, (docSnap) => {
   console.log("Old:", oldVersion);
   console.log("New:", data.version);
 
-  if (oldVersion != data.version) {
-    const banner = document.getElementById("install-banner");
+ if (oldVersion != data.version) {
+  const banner = document.getElementById("install-banner");
 
-    banner.innerHTML = `
-      <div style="flex:1">
-        <strong>📢 New timetable available</strong>
-        <span>Tap to refresh</span>
-      </div>
-      <button class="install-btn" onclick="location.reload()">Update</button>
-    `;
+  banner.innerHTML = `
+    <div style="flex:1">
+      <strong>📢 New timetable available</strong>
+      <span>Tap to refresh</span>
+    </div>
+    <button class="install-btn" onclick="location.reload()">Update</button>
+  `;
 
-    banner.classList.add("show");
+  banner.classList.add("show");
 
-    // Save new version
-    localStorage.setItem("version", data.version);
+  // Save new version
+  localStorage.setItem("version", data.version);
 
-    // Save timetable
-    localStorage.setItem("gla_v2", JSON.stringify(data.schedule));
+  // Save timetable
+  localStorage.setItem("gla_v2", JSON.stringify(data.schedule));
 
-    console.log("✅ Timetable updated");
-  }
-});
+  // 🔥 THIS WAS MISSING
+  renderHome();
+  renderEditor();
+  scheduleAlarms();
+
+  console.log("✅ Timetable updated");
+}
+  });
 </script>
 
 </body>
