@@ -16,10 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root {
-      --display: 'Plus Jakarta Sans', sans-serif;
-      --mono: 'DM Mono', monospace;
-    }
+    :root { --display: 'Plus Jakarta Sans', sans-serif; --mono: 'DM Mono', monospace; }
     body.dark {
       --bg:#0c1410; --surface:#131f18; --surface2:#1a2b22; --surface3:#213629;
       --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
@@ -39,200 +36,61 @@
       --grid-head:#e8f4ee; --grid-cell:#ffffff; --grid-active:rgba(31,90,62,0.12);
     }
     body { font-family: var(--display); background:var(--bg); color:var(--text); min-height:100dvh; transition:background .3s,color .3s; overscroll-behavior:none; }
-    .app { max-width:430px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column; }
+    .app { max-width:430px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column; position: relative; }
 
-    /* TOPBAR */
-    .topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-bottom:1px solid var(--border); background:var(--bg); position:sticky; top:0; z-index:50; }
-    .topbar-left { display:flex; flex-direction:column; gap:1px; }
-    .topbar-uni { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-family:var(--mono); }
+    .topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-bottom:1px solid var(--border); background:var(--bg); position:sticky; top:0; z-index:100; }
+    .topbar-uni { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-family:var(--mono); cursor: pointer; }
     .topbar-date { font-size:13px; font-weight:600; color:var(--text2); }
-    .topbar-right { display:flex; align-items:center; gap:10px; }
-    .topbar-clock { font-family:var(--mono); font-size:22px; font-weight:500; color:var(--text); letter-spacing:-.02em; }
-    .theme-toggle { width:34px; height:34px; border-radius:50%; border:1px solid var(--border2); background:var(--surface2); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:15px; transition:all .2s; }
-    .theme-toggle:active { transform:scale(.92); }
+    .topbar-clock { font-family:var(--mono); font-size:22px; font-weight:500; color:var(--text); }
 
-    /* INSTALL BANNER */
     .install-banner { margin:12px 16px 0; background:var(--accent-bg); border:1px solid var(--accent); border-radius:12px; padding:12px 14px; display:none; align-items:center; gap:10px; }
     .install-banner.show { display:flex; }
-    .install-banner strong { display:block; font-size:13px; color:var(--text); margin-bottom:1px; }
-    .install-banner span { font-size:11px; color:var(--text2); font-family:var(--mono); }
-    .install-btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:8px 14px; font-family:var(--display); font-size:12px; font-weight:700; cursor:pointer; flex-shrink:0; }
 
-    /* DAY ROW */
     .day-row { display:flex; gap:6px; padding:12px 16px; overflow-x:auto; border-bottom:1px solid var(--border); scrollbar-width:none; }
-    .day-row::-webkit-scrollbar { display:none; }
-    .day-pill { flex-shrink:0; padding:6px 13px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; font-family:var(--mono); cursor:pointer; border:1px solid var(--border2); background:transparent; color:var(--text2); transition:all .15s; }
+    .day-pill { flex-shrink:0; padding:6px 13px; border-radius:20px; font-size:11px; font-weight:700; text-transform:uppercase; font-family:var(--mono); cursor:pointer; border:1px solid var(--border2); color:var(--text2); }
     .day-pill.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-    .day-pill.today-pill { border-color:var(--accent); color:var(--accent); }
-    .day-pill.today-pill.active { color:#fff; }
 
-    /* SCREENS */
-    .screen { display:none; flex:1; flex-direction:column; overflow-y:auto; padding-bottom:80px; }
+    .screen { display:none; flex:1; flex-direction:column; overflow-y:auto; padding-bottom:100px; }
     .screen.active { display:flex; }
 
-    /* NOW SECTION */
-    .now-section { padding:16px 16px 0; }
-    .sec-label { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; font-family:var(--mono); color:var(--text3); margin-bottom:8px; }
-    .now-card { background:var(--surface); border:1px solid var(--border2); border-radius:16px; padding:20px; margin-bottom:12px; position:relative; overflow:hidden; }
-    .now-card-bar { position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent); }
-    .now-card-bar.free { background:var(--border2); }
-    .now-subject { font-size:28px; font-weight:800; line-height:1.05; margin-bottom:6px; letter-spacing:-.03em; }
-    .now-teacher { font-size:13px; color:var(--text2); margin-bottom:10px; font-weight:600; }
-    .now-location { display:inline-flex; align-items:center; gap:6px; background:var(--accent-bg); color:var(--accent-text); font-family:var(--mono); font-size:13px; font-weight:500; padding:5px 11px; border-radius:8px; margin-bottom:14px; }
-    .loc-dot { width:6px; height:6px; background:var(--accent); border-radius:50%; flex-shrink:0; }
-    .now-bottom { display:flex; align-items:center; justify-content:space-between; }
-    .now-timespan { font-family:var(--mono); font-size:12px; color:var(--text3); }
-    .now-badge { font-family:var(--mono); font-size:11px; font-weight:500; padding:4px 10px; border-radius:20px; }
-    .badge-red { background:var(--red-bg); color:var(--red); }
-    .badge-amber { background:var(--amber-bg); color:var(--amber); }
-    .badge-green { background:var(--accent-bg); color:var(--accent-text); }
-    .free-heading { font-size:24px; font-weight:800; color:var(--text2); margin-bottom:4px; }
-    .free-sub { font-size:13px; color:var(--text3); font-family:var(--mono); }
-    .alarm-set { display:inline-flex; align-items:center; gap:5px; font-family:var(--mono); font-size:10px; color:var(--accent-text); margin-top:8px; }
-    .alarm-dot { width:5px; height:5px; background:var(--accent); border-radius:50%; animation:blink 2s infinite; }
-    @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+    .now-card { background:var(--surface); border:1px solid var(--border2); border-radius:16px; padding:20px; margin:16px; position:relative; overflow:hidden; }
+    .now-subject { font-size:28px; font-weight:800; line-height:1.05; margin-bottom:6px; }
 
-    /* NEXT CARD */
-    .next-card { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:14px 16px; display:none; align-items:center; gap:12px; margin:0 16px 16px; }
-    .next-card.show { display:flex; }
-    .next-indicator { width:8px; height:8px; background:#4eba87; border-radius:50%; flex-shrink:0; }
-    .next-info { flex:1; }
-    .next-subject { font-size:14px; font-weight:700; margin-bottom:2px; }
-    .next-meta { font-family:var(--mono); font-size:11px; color:var(--text3); }
-    .next-in { font-family:var(--mono); font-size:11px; font-weight:700; color:#4eba87; flex-shrink:0; }
+    .class-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin:0 16px 10px; display:flex; align-items:flex-start; gap:12px; }
+    .del-btn { width:30px; height:30px; background:var(--red-bg); border:none; color:var(--red); border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
 
-    /* SCHEDULE LIST */
-    .schedule-section { padding:0 16px 16px; }
-    .sched-row { display:flex; align-items:flex-start; gap:12px; padding:11px 0; border-bottom:1px solid var(--border); }
-    .sched-row:last-child { border-bottom:none; }
-    .sched-time-col { min-width:74px; font-family:var(--mono); font-size:11px; color:var(--text3); line-height:1.6; }
-    .sched-dot { width:8px; height:8px; border-radius:50%; background:var(--border2); flex-shrink:0; margin-top:4px; }
-    .sched-dot.active { background:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); }
-    .sched-dot.done { background:var(--border); }
-    .sched-info { flex:1; }
-    .sched-name { font-size:14px; font-weight:700; margin-bottom:2px; }
-    .sched-teacher { font-size:12px; color:var(--text3); margin-bottom:2px; }
-    .sched-room { font-family:var(--mono); font-size:11px; color:var(--accent-text); }
-    .sched-row.done .sched-name, .sched-row.done .sched-room { color:var(--text3); }
-    .sched-row.active-row .sched-name { color:var(--accent-text); }
-
-    /* EDIT SCREEN */
-    .edit-screen { padding:16px; }
-    .edit-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-    .edit-title { font-size:18px; font-weight:800; }
-    .edit-tabs { display:flex; gap:6px; margin-bottom:16px; }
-    .edit-tab { flex:1; padding:9px; border:1px solid var(--border2); border-radius:10px; font-family:var(--display); font-size:12px; font-weight:700; cursor:pointer; background:transparent; color:var(--text3); text-align:center; transition:all .15s; }
-    .edit-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-    .add-btn { background:var(--accent); color:#fff; border:none; border-radius:10px; padding:9px 16px; font-family:var(--display); font-size:13px; font-weight:700; cursor:pointer; }
-
-    /* IMPORT SECTION */
-    .import-section { background:var(--surface2); border:1px dashed var(--border2); border-radius:12px; padding:14px 16px; margin-bottom:16px; display:flex; align-items:center; gap:12px; }
-    .import-section strong { display:block; font-size:13px; margin-bottom:1px; }
-    .import-section span { font-size:11px; color:var(--text2); font-family:var(--mono); }
-    .import-btn { background:var(--surface); border:1px solid var(--border2); color:var(--text2); border-radius:8px; padding:7px 12px; font-size:12px; font-weight:700; cursor:pointer; font-family:var(--display); flex-shrink:0; }
-
-    /* CLASS CARD (list view) */
-    .class-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:flex-start; gap:12px; }
-    .class-card-left { flex:1; }
-    .class-card-days { font-family:var(--mono); font-size:10px; color:var(--accent-text); font-weight:700; margin-bottom:4px; letter-spacing:.08em; }
-    .class-card-subject { font-size:15px; font-weight:800; margin-bottom:2px; }
-    .class-card-teacher { font-size:12px; color:var(--text2); margin-bottom:4px; font-weight:600; }
-    .class-card-meta { font-family:var(--mono); font-size:11px; color:var(--text3); }
-    .del-btn { width:30px; height:30px; background:var(--red-bg); border:none; color:var(--red); border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; flex-shrink:0; }
-
-    /* GRID VIEW */
-    .grid-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
-    .tt-grid { border-collapse:collapse; width:max-content; min-width:100%; font-size:11px; }
-    .tt-grid th { background:var(--grid-head); padding:8px 10px; font-family:var(--mono); font-weight:700; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text2); border:1px solid var(--border); white-space:nowrap; position:sticky; top:0; z-index:2; }
-    .tt-grid th:first-child { position:sticky; left:0; z-index:3; min-width:60px; }
-    .tt-grid td { background:var(--grid-cell); padding:0; border:1px solid var(--border); vertical-align:top; min-width:110px; }
-    .tt-grid td:first-child { background:var(--grid-head); padding:8px 10px; font-family:var(--mono); font-size:10px; color:var(--text3); white-space:nowrap; position:sticky; left:0; z-index:1; text-align:center; }
-    .grid-cell { padding:7px 8px; min-height:52px; }
-    .grid-cell.has-class { background:var(--grid-active); cursor:default; }
-    .grid-cell-subject { font-size:11px; font-weight:700; color:var(--accent-text); line-height:1.2; margin-bottom:3px; }
-    .grid-cell-room { font-family:var(--mono); font-size:10px; color:var(--text3); }
-    .grid-cell-teacher { font-size:10px; color:var(--text2); margin-top:1px; }
-
-    /* SHARE SCREEN */
-    .share-screen { padding:16px; }
-    .share-title { font-size:18px; font-weight:800; margin-bottom:4px; }
-    .share-sub { font-size:13px; color:var(--text2); font-family:var(--mono); margin-bottom:20px; }
-    .share-code-box { background:var(--surface); border:1px solid var(--border2); border-radius:12px; padding:14px 16px; font-family:var(--mono); font-size:12px; color:var(--text2); word-break:break-all; line-height:1.6; margin-bottom:16px; max-height:80px; overflow-y:auto; position:relative; }
-    .share-code-len { font-family:var(--mono); font-size:10px; color:var(--text3); margin-top:4px; margin-bottom:16px; }
-    .share-action { display:flex; align-items:center; gap:14px; background:var(--surface); border:1px solid var(--border2); border-radius:12px; padding:16px; cursor:pointer; margin-bottom:10px; transition:background .15s; }
-    .share-action:active { background:var(--surface2); }
-    .share-action-icon { font-size:22px; flex-shrink:0; }
-    .share-action-info { flex:1; }
-    .share-action-title { font-size:14px; font-weight:700; margin-bottom:2px; }
-    .share-action-sub { font-size:12px; color:var(--text2); font-family:var(--mono); }
-    .divider { font-size:11px; font-family:var(--mono); color:var(--text3); text-align:center; margin:16px 0; }
-    .import-paste { background:var(--surface); border:1px solid var(--border2); border-radius:12px; padding:12px; width:100%; font-family:var(--mono); font-size:12px; color:var(--text); resize:vertical; min-height:72px; margin-bottom:10px; outline:none; }
-    .import-paste:focus { border-color:var(--accent); }
-    .import-action-btn { width:100%; padding:13px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-family:var(--display); font-size:14px; font-weight:700; cursor:pointer; }
-
-    /* MODAL */
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); display:none; align-items:flex-end; justify-content:center; z-index:200; }
-    .modal-overlay.open { display:flex; }
-    .modal { background:var(--surface); border-radius:20px 20px 0 0; padding:24px 20px 36px; width:100%; max-width:430px; max-height:92vh; overflow-y:auto; }
-    .modal-handle { width:36px; height:4px; background:var(--border2); border-radius:2px; margin:0 auto 18px; }
-    .modal-title { font-size:20px; font-weight:800; margin-bottom:20px; }
-    .field { margin-bottom:14px; }
-    .field label { display:block; font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; font-family:var(--mono); color:var(--text2); margin-bottom:6px; }
-    .field input, .field select { width:100%; padding:11px 14px; background:var(--surface2); border:1px solid var(--border2); border-radius:10px; color:var(--text); font-family:var(--display); font-size:14px; font-weight:600; outline:none; -webkit-appearance:none; }
-    .field input:focus, .field select:focus { border-color:var(--accent); }
-    .field input[type=time] { font-family:var(--mono); }
-    .field input::placeholder { color:var(--text3); font-weight:400; }
-    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .day-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
-    .day-chip { padding:8px 4px; border:1px solid var(--border2); border-radius:8px; text-align:center; cursor:pointer; font-size:11px; font-family:var(--mono); font-weight:700; color:var(--text3); transition:all .15s; user-select:none; }
-    .day-chip.on { background:var(--accent); border-color:var(--accent); color:#fff; }
-    .alarm-field { display:flex; align-items:center; justify-content:space-between; background:var(--surface2); border:1px solid var(--border2); border-radius:10px; padding:12px 14px; }
-    .alarm-label { font-size:14px; font-weight:600; }
-    .alarm-sublabel { font-size:11px; color:var(--text2); font-family:var(--mono); margin-top:2px; }
-    .toggle { width:42px; height:24px; background:var(--border2); border-radius:12px; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
-    .toggle.on { background:var(--accent); }
-    .toggle::after { content:''; position:absolute; width:18px; height:18px; background:#fff; border-radius:50%; top:3px; left:3px; transition:transform .2s; }
-    .toggle.on::after { transform:translateX(18px); }
-    .copy-prev-btn { width:100%; padding:10px; background:var(--surface2); border:1px dashed var(--border2); border-radius:10px; color:var(--text2); font-family:var(--display); font-size:13px; font-weight:600; cursor:pointer; margin-bottom:14px; text-align:center; transition:all .15s; }
-    .copy-prev-btn:active { background:var(--accent-bg); color:var(--accent-text); }
-    .modal-btns { display:flex; gap:10px; margin-top:20px; }
-    .btn-cancel { flex:1; padding:13px; background:var(--surface2); color:var(--text2); border:none; border-radius:10px; font-family:var(--display); font-size:14px; font-weight:700; cursor:pointer; }
-    .btn-save { flex:2; padding:13px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-family:var(--display); font-size:14px; font-weight:700; cursor:pointer; }
-
-    /* NAV */
     .bottom-nav { 
-  display: flex; 
-  border-top: 1px solid var(--border); 
-  background: var(--nav-bg); 
-  position: fixed; 
-  bottom: 0; 
-  left: 50%; 
-  transform: translateX(-50%); 
-  width: 100%; 
-  max-width: 430px; 
-  z-index: 9999; /* Higher than everything else */
-  padding-bottom: env(safe-area-inset-bottom); /* Fix for modern phone notches */
-}
-    .nav-btn { flex:1; padding:12px 8px 14px; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; cursor:pointer; color:var(--text3); font-family:var(--display); font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; transition:color .15s; }
+        display: flex; 
+        border-top: 1px solid var(--border); 
+        background: var(--nav-bg); 
+        position: fixed; 
+        bottom: 0; 
+        left: 50%; 
+        transform: translateX(-50%); 
+        width: 100%; 
+        max-width: 430px; 
+        z-index: 9999; 
+        padding-bottom: env(safe-area-inset-bottom, 10px);
+    }
+    .nav-btn { flex:1; padding:12px 8px 14px; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; cursor:pointer; color:var(--text3); font-size:10px; font-weight:700; text-transform:uppercase; }
     .nav-btn.active { color:var(--accent); }
-    .nav-icon { font-size:20px; line-height:1; }
+    .nav-icon { font-size:20px; }
 
-    .empty { text-align:center; padding:48px 24px; color:var(--text3); }
-    .empty-icon { font-size:40px; margin-bottom:12px; }
-    .empty p { font-size:14px; line-height:1.6; }
-    .toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--text); color:var(--bg); padding:10px 20px; border-radius:20px; font-size:13px; font-weight:700; opacity:0; transition:all .25s; pointer-events:none; z-index:300; white-space:nowrap; }
-    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); display:none; align-items:flex-end; justify-content:center; z-index:10000; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--surface); border-radius:20px 20px 0 0; padding:24px 20px 36px; width:100%; max-width:430px; }
+
+    .toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%); background:var(--text); color:var(--bg); padding:10px 20px; border-radius:20px; font-size:13px; font-weight:700; opacity:0; transition:all .25s; pointer-events:none; z-index:10001; }
+    .toast.show { opacity:1; }
   </style>
 </head>
-  
- 
+
 <body class="dark">
 <div class="app">
-
   <div class="topbar">
     <div class="topbar-left">
       <span class="topbar-uni">GLA University</span>
-      <span class="topbar-date" id="topbar-date">Monday, 16 Mar</span>
+      <span class="topbar-date" id="topbar-date">Loading...</span>
     </div>
     <div class="topbar-right">
       <span class="topbar-clock" id="clock">00:00</span>
@@ -241,123 +99,68 @@
   </div>
 
   <div class="install-banner" id="install-banner">
-    <div style="flex:1">
-      <strong>Install GLA Timetable</strong>
-      <span>Add to home screen · works offline</span>
-    </div>
-    <button class="install-btn" id="install-btn">Install</button>
+    <div style="flex:1"><strong>📢 Update available</strong><span>Syncing schedule...</span></div>
+    <button class="install-btn" id="install-btn">Refresh</button>
   </div>
 
-  <!-- HOME -->
   <div class="screen active" id="screen-home">
     <div class="day-row" id="day-row"></div>
-    <div class="now-section">
-      <div class="sec-label">Right now</div>
-      <div class="now-card" id="now-card">
-        <div class="now-card-bar free"></div>
+    <div class="now-section" style="padding:16px 16px 0"><div class="sec-label">Right now</div></div>
+    <div class="now-card" id="now-card">
         <div class="free-heading">Loading…</div>
-      </div>
     </div>
-    <div id="next-card" class="next-card">
-      <div class="next-indicator"></div>
-      <div class="next-info">
-        <div class="next-subject" id="next-subject">—</div>
-        <div class="next-meta" id="next-meta">—</div>
-      </div>
-      <div class="next-in" id="next-in">—</div>
-    </div>
-    <div class="schedule-section">
-      <div class="sec-label">Full schedule</div>
-      <div id="schedule-list"></div>
-    </div>
+    <div class="schedule-section" style="padding:0 16px 16px"><div class="sec-label">Full schedule</div><div id="schedule-list"></div></div>
   </div>
 
-  <!-- EDIT -->
   <div class="screen" id="screen-edit">
-    <div class="edit-screen">
-      <div class="edit-header">
-        <span class="edit-title">My Classes</span>
-        <button class="add-btn" id="open-add-btn">+ Add</button>
+    <div style="padding:16px">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+        <span style="font-size:18px; font-weight:800">My Classes</span>
+        <button class="add-btn" id="open-add-btn" style="padding:8px 16px; background:var(--accent); color:#fff; border:none; border-radius:8px">+ Add</button>
       </div>
-      <div class="edit-tabs">
-        <button class="edit-tab active" id="tab-grid" onclick="switchEditTab('grid')">Grid View</button>
-        <button class="edit-tab" id="tab-list" onclick="switchEditTab('list')">List View</button>
+      <div class="import-section" style="background:var(--surface2); padding:16px; border-radius:12px; margin-bottom:16px">
+        <strong>Global Timetable</strong>
+        <div style="display:flex; gap:8px; margin-top:8px">
+          <button class="import-btn" id="load-default-btn" style="padding:8px; border:1px solid var(--border2); border-radius:8px; background:var(--surface)">Load</button>
+          <button class="import-btn" id="admin-push-btn" style="display:none; padding:8px; background:var(--accent-bg); color:var(--accent); border:1px solid var(--accent); border-radius:8px">Push to Firebase</button>
+        </div>
       </div>
-<div class="import-section">
-  <div style="font-size:22px;flex-shrink:0">📋</div>
-  <div style="flex:1">
-    <strong>Global Timetable</strong>
-    <span>Control what everyone sees</span>
+      <div id="list-view"></div>
+    </div>
   </div>
-  <div style="display:flex; flex-direction:column; gap:5px">
-    <button class="import-btn" id="load-default-btn">Load</button>
-    <button class="import-btn" id="admin-push-btn" style="background:var(--accent-bg); color:var(--accent); border-color:var(--accent)">Push to Firebase</button>
-  </div>
-</div>
 
-  <!-- SHARE -->
   <div class="screen" id="screen-share">
-    <div class="share-screen">
-      <div class="share-title">Share & Import</div>
-      <div class="share-sub">Share your timetable with classmates</div>
-      <div class="sec-label" style="margin-bottom:6px">Your share code</div>
-      <div class="share-code-box" id="share-code-box">Add classes first to generate a code.</div>
-      <div class="share-code-len" id="share-code-len"></div>
-      <div class="share-action" id="copy-btn">
-        <div class="share-action-icon">📋</div>
-        <div class="share-action-info">
-          <div class="share-action-title">Copy code</div>
-          <div class="share-action-sub">Paste in WhatsApp, Telegram, etc.</div>
-        </div>
-        <span style="font-size:18px;color:var(--text3)">›</span>
-      </div>
-      <div class="share-action" id="share-link-btn">
-        <div class="share-action-icon">🔗</div>
-        <div class="share-action-info">
-          <div class="share-action-title">Share as link</div>
-          <div class="share-action-sub">Friend opens link → instantly imports</div>
-        </div>
-        <span style="font-size:18px;color:var(--text3)">›</span>
-      </div>
-      <div class="divider">─── import a classmate's code ───</div>
-      <textarea class="import-paste" id="import-paste" placeholder="Paste a share code or link here…"></textarea>
-      <button class="import-action-btn" id="import-action-btn">Import Timetable</button>
+    <div style="padding:16px">
+      <h2>Share & Import</h2>
+      <div class="share-code-box" id="share-code-box" style="background:var(--surface); padding:16px; border-radius:12px; word-break:break-all; margin:16px 0">Add classes first.</div>
+      <textarea id="import-paste" class="import-paste" style="width:100%; padding:12px; border-radius:12px; background:var(--surface); color:var(--text); height:80px" placeholder="Paste code here..."></textarea>
+      <button id="import-action-btn" style="width:100%; padding:14px; background:var(--accent); color:#fff; border:none; border-radius:12px; margin-top:12px">Import</button>
     </div>
   </div>
 
   <div class="bottom-nav">
-    <button class="nav-btn active" id="nav-home" onclick="goScreen('home')"><span class="nav-icon">◉</span>Now</button>
-    <button class="nav-btn" id="nav-edit" onclick="goScreen('edit')"><span class="nav-icon">✦</span>Edit</button>
-    <button class="nav-btn" id="nav-share" onclick="goScreen('share')"><span class="nav-icon">↑</span>Share</button>
+    <button class="nav-btn active" onclick="goScreen('home')"><span class="nav-icon">◉</span>Now</button>
+    <button class="nav-btn" onclick="goScreen('edit')"><span class="nav-icon">✦</span>Edit</button>
+    <button class="nav-btn" onclick="goScreen('share')"><span class="nav-icon">↑</span>Share</button>
   </div>
 </div>
 
-<!-- ADD MODAL -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Add Class</div>
-    <button class="copy-prev-btn" id="copy-prev-btn" onclick="copyPrevious()">↑ Copy data from previous class</button>
-    <div class="field"><label>Subject Name</label><input type="text" id="f-subject" placeholder="e.g. PROGRAMMING" autocomplete="off" /></div>
-    <div class="two-col">
-      <div class="field"><label>Block</label><input type="text" id="f-block" placeholder="e.g. AB 7" autocomplete="off" /></div>
-      <div class="field"><label>Room</label><input type="text" id="f-room" placeholder="e.g. 209" autocomplete="off" /></div>
+    <div class="modal-title" style="font-weight:800; font-size:18px; margin-bottom:16px">Add/Edit Class</div>
+    <input type="text" id="f-subject" placeholder="Subject" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; background:var(--surface2); color:var(--text); border:1px solid var(--border2)">
+    <div style="display:flex; gap:10px">
+        <input type="text" id="f-block" placeholder="Block" style="flex:1; padding:12px; border-radius:8px; background:var(--surface2); color:var(--text); border:1px solid var(--border2)">
+        <input type="text" id="f-room" placeholder="Room" style="flex:1; padding:12px; border-radius:8px; background:var(--surface2); color:var(--text); border:1px solid var(--border2)">
     </div>
-    <div class="field"><label>Teacher / Professor</label><input type="text" id="f-teacher" placeholder="e.g. Dr. Sharma" autocomplete="off" /></div>
-    <div class="two-col">
-      <div class="field"><label>Start Time</label><input type="time" id="f-start" /></div>
-      <div class="field"><label>End Time</label><input type="time" id="f-end" /></div>
+    <div style="display:flex; gap:10px; margin-top:10px">
+        <input type="time" id="f-start" style="flex:1; padding:12px; border-radius:8px; background:var(--surface2); color:var(--text); border:1px solid var(--border2)">
+        <input type="time" id="f-end" style="flex:1; padding:12px; border-radius:8px; background:var(--surface2); color:var(--text); border:1px solid var(--border2)">
     </div>
-    <div class="field"><label>Days</label><div class="day-grid" id="day-chips"></div></div>
-    <div class="field"><label>Bell Alarm</label>
-      <div class="alarm-field">
-        <div><div class="alarm-label">Notify before class</div><div class="alarm-sublabel">10 min reminder</div></div>
-        <div class="toggle on" id="alarm-toggle" onclick="this.classList.toggle('on')"></div>
-      </div>
-    </div>
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" onclick="saveClass()">Save Class</button>
+    <div id="day-chips" class="day-row" style="border:none; padding:16px 0"></div>
+    <div style="display:flex; gap:10px; margin-top:10px">
+        <button onclick="closeModal()" style="flex:1; padding:12px; border-radius:8px; background:var(--surface2); color:var(--text2); border:none">Cancel</button>
+        <button onclick="saveClass()" style="flex:2; padding:12px; border-radius:8px; background:var(--accent); color:#fff; border:none">Save Class</button>
     </div>
   </div>
 </div>
@@ -365,440 +168,126 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── CONSTANTS ──
 const DAYS_S = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const DAYS_F = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-// Your real GLA schedule as default
-const DEFAULT_TT = [{"subject":"DATA ENGENEERING LAB","block":"AB 1","room":"323","teacher":"REKHA RANI","start":"08:00","end":"09:00","days":[0],"alarm":false},{"subject":"DATA ENGENEERING LAB","block":"AB 1","room":"323","teacher":"REKHA RANI","start":"09:00","end":"10:00","days":[0],"alarm":false},{"subject":"PROGRAMMING LAB","block":"AB 7","room":"109","teacher":"PRAGYA SINGH","start":"10:00","end":"11:00","days":[0],"alarm":false},{"subject":"PROGRAMMING LAB","block":"AB 7","room":"109","teacher":"PRAGYA SINGH","start":"11:00","end":"12:00","days":[0],"alarm":false},{"subject":"INTRO. LINEAR ALGEBRA","block":"AB 7","room":"409","teacher":"SHIVANI KUSHWAHA","start":"13:00","end":"14:00","days":[0],"alarm":false},{"subject":"ENGLISH COMMUNICATION SKILLS","block":"AB 7","room":"409","teacher":"KHUSHBU KUMARI","start":"14:00","end":"15:00","days":[0],"alarm":false},{"subject":"DATABASE TECHNOLOGY","block":"AB 7","room":"409","teacher":"RAHUL PRADHAN","start":"15:00","end":"16:00","days":[0],"alarm":false},{"subject":"DATA ENGINEERING","block":"AB 7","room":"207","teacher":"ANKIT GAUR","start":"08:00","end":"09:00","days":[1],"alarm":false},{"subject":"DESIGN THINKING","block":"AB 7","room":"207","teacher":"ROHINI RAINA","start":"09:00","end":"10:00","days":[1],"alarm":false},{"subject":"INTRODUCTION TO LINEAR ALGEBRA","block":"AB 7","room":"207","teacher":"SHIVANI KUSHWAHA","start":"10:00","end":"11:00","days":[1],"alarm":false},{"subject":"PROGRAMMING","block":"AB 7","room":"311","teacher":"PRAGYA SINGH","start":"13:00","end":"14:00","days":[1],"alarm":false},{"subject":"DATABASE TECHNOLOGY LAB","block":"AB 1","room":"323","teacher":"YASH AGARWAL","start":"14:00","end":"15:00","days":[1],"alarm":false},{"subject":"DATABASE TECHNOLOGY LAB","block":"AB 1","room":"323","teacher":"YASH AGARWAL","start":"15:00","end":"16:00","days":[1],"alarm":false},{"subject":"PROGRAMMING","block":"AB 7","room":"401","teacher":"PRAGYA SINGH","start":"10:00","end":"11:00","days":[2],"alarm":false},{"subject":"INDUSTRIAL CERTIFICATE","block":"AB 7","room":"211","teacher":"MANAS SHRIVASTAVA","start":"11:00","end":"12:00","days":[2],"alarm":false},{"subject":"INTRODUCTION TO LINEAR ALGEBRA","block":"AB 7","room":"315","teacher":"SHIVANI KUSHWAHA","start":"13:00","end":"14:00","days":[2],"alarm":true},{"subject":"DATA ENGENEERING","block":"AB 7","room":"409","teacher":"ANKIT GAUR","start":"14:00","end":"15:00","days":[2],"alarm":false},{"subject":"DATABASE TECHNOLOGY","block":"AB 7","room":"409","teacher":"RAHUL PRADHAN","start":"15:00","end":"16:00","days":[2],"alarm":false},{"subject":"DATA ENGENEERING","block":"AB 7","room":"407","teacher":"ANKIT GAUR","start":"08:00","end":"09:00","days":[3],"alarm":false},{"subject":"INTRODUCTION TO LINEAR ALGEBRA","block":"AB 7","room":"407","teacher":"SHIVANI KUSHWAHA","start":"09:00","end":"10:00","days":[3],"alarm":false},{"subject":"DATABASE TECHNOLOGY","block":"AB 7","room":"407","teacher":"RAHUL PRADHAN","start":"10:00","end":"11:00","days":[3],"alarm":false},{"subject":"PROGRAMMING","block":"AB 7","room":"207","teacher":"PRAGYA SINGH","start":"11:00","end":"12:00","days":[3],"alarm":false},{"subject":"DESIGN THINKING","block":"AB 7","room":"310","teacher":"ROHINI RAINA","start":"13:00","end":"14:00","days":[3],"alarm":false},{"subject":"ENGLISH COMMUNICATION SKILLS","block":"AB 7","room":"411","teacher":"KHUSHBU KUMARI","start":"14:00","end":"15:00","days":[3],"alarm":false},{"subject":"INDUSTRIAL CERTIFICATE","block":"AB 7","room":"211","teacher":"MANAS SHRIVASTAVA","start":"15:00","end":"16:00","days":[3],"alarm":false},{"subject":"ENGLISH COMMUNICATION SKILLS","block":"AB 8","room":"307","teacher":"KHUSHBU KUMARI","start":"08:00","end":"09:00","days":[4],"alarm":false},{"subject":"ENGLISH COMMUNICATION SKILLS","block":"AB 8","room":"307","teacher":"KHUSHBU KUMARI","start":"09:00","end":"10:00","days":[4],"alarm":false},{"subject":"DESIGN THINKING","block":"AB 7","room":"314","teacher":"ROHINI RAINA","start":"10:00","end":"11:00","days":[4],"alarm":false},{"subject":"INTRODUCTION TO LINEAR ALGEBRA","block":"AB 7","room":"314","teacher":"SHIVANI KUSHWAHA","start":"11:00","end":"12:00","days":[4],"alarm":false}];
-
-// ── SHORT ENCODE/DECODE (compact JSON, no URL encoding) ──
-function encodeShare(data) {
-  // Compact representation: array of [s,bl,ro,te,st,en,days,alarm]
-  const compact = data.map(c => [c.subject,c.block,c.room,c.teacher||'',c.start,c.end,c.days,c.alarm?1:0]);
-  const json = JSON.stringify(compact);
-  // btoa on raw UTF-8 via TextEncoder
-  const bytes = new TextEncoder().encode(json);
-  let bin = '';
-  bytes.forEach(b => bin += String.fromCharCode(b));
-  return btoa(bin);
-}
-function decodeShare(code) {
-  try {
-    const bin = atob(code.trim());
-    const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
-    const json = new TextDecoder().decode(bytes);
-    const compact = JSON.parse(json);
-    if (!Array.isArray(compact)) throw 0;
-    return compact.map(c => ({subject:c[0],block:c[1],room:c[2],teacher:c[3],start:c[4],end:c[5],days:c[6],alarm:!!c[7]}));
-  } catch(e) {
-    // Fallback: old format (btoa(encodeURIComponent(JSON.stringify(...))))
-    try {
-      const old = JSON.parse(decodeURIComponent(atob(code.trim()).replace(/%3@/g,':')));
-      if (Array.isArray(old)) return old;
-    } catch(e2) {}
-    return null;
-  }
-}
-
-// ── STORAGE ──
-const loadC = () => { try { return JSON.parse(localStorage.getItem('gla_v2') || '[]'); } catch(e) { return []; } };
-const saveC = d => localStorage.setItem('gla_v2', JSON.stringify(d));
-const loadTheme = () => localStorage.getItem('gla_theme') || 'dark';
-const saveTheme = t => localStorage.setItem('gla_theme', t);
-
-// ── HELPERS ──
+const loadC = () => JSON.parse(localStorage.getItem('gla_v2') || '[]');
+const saveC = d => { localStorage.setItem('gla_v2', JSON.stringify(d)); renderHome(); renderEditor(); };
 const toM = t => { const [h,m]=t.split(':').map(Number); return h*60+m; };
-const fmt12 = t => { const [h,m]=t.split(':').map(Number); return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`; };
-const todayIdx = () => (new Date().getDay()+6)%7;
+const fmt12 = t => { if(!t) return '--'; const [h,m]=t.split(':').map(Number); return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`; };
 const nowM = () => { const n=new Date(); return n.getHours()*60+n.getMinutes(); };
 
-// ── STATE ──
-let viewDay = null;
 let selectedDays = [];
-let deferredPrompt = null;
-let alarmTimers = {};
-let editTab = 'grid';
+let viewDay = (new Date().getDay()+6)%7;
 
-// ── THEME ──
-function applyTheme(t) {
-  document.body.className = t;
-  document.getElementById('theme-toggle').textContent = t==='dark'?'🌙':'☀️';
-  document.getElementById('theme-meta').content = t==='dark'?'#0c1410':'#f0f7f3';
-  saveTheme(t);
-}
-document.getElementById('theme-toggle').onclick = () => applyTheme(document.body.className==='dark'?'light':'dark');
-applyTheme(loadTheme());
-
-// ── CLOCK ──
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  const dow = DAYS_F[(now.getDay()+6)%7];
-  document.getElementById('topbar-date').textContent = `${dow.slice(0,3)}, ${now.getDate()} ${MONTHS[now.getMonth()]}`;
-}
-
-// ── ALARMS ──
-function scheduleAlarms() {
-  Object.values(alarmTimers).forEach(clearTimeout);
-  alarmTimers = {};
-  const today = todayIdx();
-  const nm = nowM();
-  loadC().forEach((c,i) => {
-    if (!c.alarm || !c.days.includes(today)) return;
-    const diff = (toM(c.start)-10) - nm;
-    if (diff > 0 && diff < 480) {
-      alarmTimers[i] = setTimeout(() => {
-        showToast(`🔔 ${c.subject} in 10 min · ${c.block} ${c.room}`);
-        if ('Notification' in window && Notification.permission==='granted')
-          new Notification(`GLA: ${c.subject} in 10 min`,{body:`${c.block} · Room ${c.room} · ${fmt12(c.start)}`,icon:'icons/icon-192.png'});
-      }, diff*60000);
-    }
-  });
-}
-
-// ── TOAST ──
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ── SCREEN NAV ──
 function goScreen(name) {
-  ['home','edit','share'].forEach(s => {
-    document.getElementById(`screen-${s}`).classList.toggle('active', s===name);
-    document.getElementById(`nav-${s}`).classList.toggle('active', s===name);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(`screen-${name}`).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach((b, i) => {
+      b.classList.toggle('active', ['home','edit','share'][i] === name);
   });
-  if (name==='edit') renderEditor();
-  if (name==='home') renderHome();
-  if (name==='share') renderShare();
+  if(name==='home') renderHome();
 }
 
-// ── DAY ROW ──
 function renderDayRow() {
-  const today = todayIdx();
-  if (viewDay===null) viewDay = today;
   document.getElementById('day-row').innerHTML = DAYS_S.map((d,i) =>
-    `<div class="day-pill ${i===viewDay?'active':''} ${i===today&&i!==viewDay?'today-pill':''}" onclick="setViewDay(${i})">${d}</div>`
+    `<div class="day-pill ${i===viewDay?'active':''}" onclick="viewDay=${i};renderDayRow();renderHome();">${d}</div>`
   ).join('');
 }
-function setViewDay(i) { viewDay=i; renderDayRow(); renderHome(); }
-
-// ── HOME ──
-function getForDay(di) { return loadC().filter(c=>c.days.includes(di)).sort((a,b)=>toM(a.start)-toM(b.start)); }
 
 function renderHome() {
-  const today = todayIdx();
-  const dIdx = viewDay!==null ? viewDay : today;
-  const isToday = dIdx===today;
-  const nm = nowM();
-  const dc = getForDay(dIdx);
-  let curr=null, nxt=null;
-  if (isToday) {
-    curr = dc.find(c=>toM(c.start)<=nm&&nm<toM(c.end));
-    nxt  = dc.find(c=>toM(c.start)>nm);
-  }
-
+  const dc = loadC().filter(c=>c.days.includes(viewDay)).sort((a,b)=>toM(a.start)-toM(b.start));
   const card = document.getElementById('now-card');
-  if (!isToday) {
-    card.innerHTML = `<div class="now-card-bar free"></div><div class="free-heading">${DAYS_F[dIdx]}</div><div class="free-sub">Viewing schedule ↓</div>`;
-  } else if (curr) {
-    const left = toM(curr.end)-nm;
-    const bc = left<=5?'badge-red':left<=15?'badge-amber':'badge-green';
-    const bt = left<=5?'ending soon':`${left}m left`;
-    card.innerHTML = `<div class="now-card-bar"></div>
-      <div class="now-subject">${curr.subject}</div>
-      ${curr.teacher?`<div class="now-teacher">${curr.teacher}</div>`:''}
-      <div class="now-location"><div class="loc-dot"></div>${curr.block} · Room ${curr.room}</div>
-      <div class="now-bottom"><span class="now-timespan">${fmt12(curr.start)} → ${fmt12(curr.end)}</span><span class="now-badge ${bc}">${bt}</span></div>
-      ${curr.alarm?'<div class="alarm-set"><div class="alarm-dot"></div>alarm on</div>':''}`;
+  const nm = nowM();
+  const curr = dc.find(c=>toM(c.start)<=nm && nm<toM(c.end));
+
+  if (curr) {
+    card.innerHTML = `<div class="now-subject">${curr.subject}</div><div>${curr.block} · Room ${curr.room}</div><div style="font-family:monospace; margin-top:8px">${fmt12(curr.start)} - ${fmt12(curr.end)}</div>`;
   } else {
-    const allDone = dc.length>0 && dc.every(c=>nm>=toM(c.end));
-    const [h,s] = dc.length===0?['No classes today','Enjoy your day 🎉']:allDone?['All done for today!','Great work today']:['Free right now','Next class coming up'];
-    card.innerHTML = `<div class="now-card-bar free"></div><div class="free-heading">${h}</div><div class="free-sub">${s}</div>`;
+    card.innerHTML = `<div class="free-heading">No Class Right Now</div>`;
   }
 
-  const nc = document.getElementById('next-card');
-  if (nxt && isToday) {
-    const inM = toM(nxt.start)-nm;
-    document.getElementById('next-subject').textContent = `${nxt.subject} · ${nxt.block} ${nxt.room}`;
-    document.getElementById('next-meta').textContent = `${fmt12(nxt.start)} – ${fmt12(nxt.end)}${nxt.teacher?' · '+nxt.teacher:''}`;
-    document.getElementById('next-in').textContent = inM<60?`in ${inM}m`:`in ${Math.floor(inM/60)}h ${inM%60}m`;
-    nc.classList.add('show');
-  } else nc.classList.remove('show');
-
-  const list = document.getElementById('schedule-list');
-  if (!dc.length) { list.innerHTML=`<div style="color:var(--text3);font-family:var(--mono);font-size:12px;padding:12px 0">Nothing scheduled — go to Edit to add classes.</div>`; return; }
-  list.innerHTML = dc.map(c => {
-    const sm=toM(c.start),em=toM(c.end);
-    let rc='',dc2='';
-    if (isToday) { if(nm>=sm&&nm<em){rc='active-row';dc2='active';}else if(nm>=em){rc='done';dc2='done';} }
-    return `<div class="sched-row ${rc}">
-      <div class="sched-time-col">${fmt12(c.start)}<br>${fmt12(c.end)}</div>
-      <div class="sched-dot ${dc2}" style="margin-top:4px"></div>
-      <div class="sched-info">
-        <div class="sched-name">${c.subject}</div>
-        ${c.teacher?`<div class="sched-teacher">${c.teacher}</div>`:''}
-        <div class="sched-room">${c.block} · Room ${c.room}</div>
-      </div></div>`;
-  }).join('');
-}
-
-// ── EDITOR ──
-function switchEditTab(tab) {
-  editTab = tab;
-  document.getElementById('tab-grid').classList.toggle('active', tab==='grid');
-  document.getElementById('tab-list').classList.toggle('active', tab==='list');
-  document.getElementById('grid-view').style.display = tab==='grid'?'block':'none';
-  document.getElementById('list-view').style.display = tab==='list'?'block':'none';
-}
-
-function renderEditor() {
-  renderGridView();
-  renderListView();
-  switchEditTab(editTab);
-}
-
-function renderGridView() {
-  const classes = loadC();
-  const el = document.getElementById('grid-view');
-  if (!classes.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">📚</div><p>No classes yet.<br>Tap <strong>+ Add</strong> to get started.</p></div>`;
-    return;
-  }
-  // Collect all unique time slots
-  const slots = [...new Set(classes.map(c=>c.start))].sort();
-  const activeDays = [0,1,2,3,4,5,6].filter(d => classes.some(c=>c.days.includes(d)));
-  let html = `<div class="grid-wrap"><table class="tt-grid"><thead><tr><th>Time</th>`;
-  activeDays.forEach(d => html += `<th>${DAYS_S[d]}</th>`);
-  html += `</tr></thead><tbody>`;
-  slots.forEach(slot => {
-    html += `<tr><td>${fmt12(slot)}</td>`;
-    activeDays.forEach(d => {
-      const c = classes.find(cl => cl.start===slot && cl.days.includes(d));
-      if (c) {
-        html += `<td><div class="grid-cell has-class"><div class="grid-cell-subject">${c.subject}</div><div class="grid-cell-room">${c.block} · ${c.room}</div>${c.teacher?`<div class="grid-cell-teacher">${c.teacher}</div>`:''}</div></td>`;
-      } else {
-        html += `<td><div class="grid-cell"></div></td>`;
-      }
-    });
-    html += `</tr>`;
-  });
-  html += `</tbody></table></div>`;
-  el.innerHTML = html;
-}
-
-function renderListView() {
-  const classes = loadC();
-  const el = document.getElementById('list-view');
-  if (!classes.length) { el.innerHTML=''; return; }
-  el.innerHTML = classes.map((c,i) => `
-    <div class="class-card">
-      <div class="class-card-left">
-        <div class="class-card-days">${c.days.map(d=>DAYS_S[d]).join(' · ')}</div>
-        <div class="class-card-subject">${c.subject}</div>
-        ${c.teacher?`<div class="class-card-teacher">${c.teacher}</div>`:''}
-        <div class="class-card-meta">${c.block} · Room ${c.room} &nbsp;|&nbsp; ${fmt12(c.start)} – ${fmt12(c.end)}${c.alarm?' 🔔':''}</div>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:8px;">
-        <button class="del-btn" style="background:var(--accent-bg); color:var(--accent);" onclick="editClass(${i})">✎</button>
-        <button class="del-btn" onclick="delClass(${i})">✕</button>
-      </div>
+  document.getElementById('schedule-list').innerHTML = dc.map(c => `
+    <div class="sched-row" style="display:flex; gap:15px; padding:12px 0; border-bottom:1px solid var(--border)">
+      <div style="font-family:monospace; font-size:12px; min-width:70px">${fmt12(c.start)}<br>${fmt12(c.end)}</div>
+      <div><strong>${c.subject}</strong><br><span style="color:var(--text3)">${c.block} · Room ${c.room}</span></div>
     </div>`).join('');
 }
 
-function delClass(i) {
-  const a=loadC(); a.splice(i,1); saveC(a);
-  renderEditor(); renderHome(); scheduleAlarms();
-  showToast('Removed');
+function renderEditor() {
+  const el = document.getElementById('list-view');
+  el.innerHTML = loadC().map((c,i) => `
+    <div class="class-card">
+      <div style="flex:1">
+        <div style="font-size:10px; color:var(--accent)">${c.days.map(d=>DAYS_S[d]).join(' ')}</div>
+        <strong>${c.subject}</strong><br>${c.block} · Room ${c.room}
+      </div>
+      <button class="del-btn" onclick="editClass(${i})" style="background:var(--accent-bg); color:var(--accent); margin-right:5px">✎</button>
+      <button class="del-btn" onclick="delClass(${i})">✕</button>
+    </div>`).join('');
 }
 
-document.getElementById('load-default-btn').onclick = () => {
-  if (loadC().length>0 && !confirm('Replace your current timetable with the default GLA schedule?')) return;
-  saveC(DEFAULT_TT); renderEditor(); renderHome(); scheduleAlarms();
-  showToast('Default timetable loaded!');
+window.editClass = function(i) {
+    const c = loadC()[i];
+    document.getElementById('f-subject').value = c.subject;
+    document.getElementById('f-block').value = c.block;
+    document.getElementById('f-room').value = c.room;
+    document.getElementById('f-start').value = c.start;
+    document.getElementById('f-end').value = c.end;
+    selectedDays = [...c.days];
+    buildChips();
+    const a = loadC(); a.splice(i, 1); localStorage.setItem('gla_v2', JSON.stringify(a));
+    document.getElementById('modal').classList.add('open');
 };
 
-// ── MODAL ──
+function delClass(i) { const a = loadC(); a.splice(i,1); saveC(a); }
+
 function buildChips() {
-  selectedDays=[];
   document.getElementById('day-chips').innerHTML = DAYS_S.map((d,i)=>
-    `<div class="day-chip" data-i="${i}" onclick="toggleChip(${i})">${d}</div>`
+    `<div class="day-chip ${selectedDays.includes(i)?'on':''}" style="padding:8px; border:1px solid var(--border2); border-radius:8px; margin-right:5px; cursor:pointer; background:${selectedDays.includes(i)?'var(--accent)':'none'}" onclick="toggleChip(${i})">${d}</div>`
   ).join('');
 }
 function toggleChip(i) {
-  const el=document.querySelector(`.day-chip[data-i="${i}"]`);
-  if (selectedDays.includes(i)) { selectedDays=selectedDays.filter(d=>d!==i); el.classList.remove('on'); }
-  else { selectedDays.push(i); el.classList.add('on'); }
-}
-function openModal() {
+  if(selectedDays.includes(i)) selectedDays = selectedDays.filter(d=>d!==i);
+  else selectedDays.push(i);
   buildChips();
-  ['f-subject','f-block','f-room','f-teacher'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-start').value='09:00';
-  document.getElementById('f-end').value='10:00';
-  document.getElementById('alarm-toggle').classList.add('on');
-  // Show "copy previous" only if there are existing classes
-  document.getElementById('copy-prev-btn').style.display = loadC().length>0?'block':'none';
-  document.getElementById('modal').classList.add('open');
-  setTimeout(()=>document.getElementById('f-subject').focus(),100);
 }
+
+function openModal() { selectedDays=[]; buildChips(); document.getElementById('modal').classList.add('open'); }
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
 document.getElementById('open-add-btn').onclick = openModal;
-document.getElementById('modal').addEventListener('click', e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
-
-function copyPrevious() {
-  const arr = loadC();
-  if (!arr.length) return;
-  const prev = arr[arr.length-1];
-  document.getElementById('f-subject').value = prev.subject;
-  document.getElementById('f-block').value = prev.block;
-  document.getElementById('f-room').value = prev.room;
-  document.getElementById('f-teacher').value = prev.teacher||'';
-  document.getElementById('f-start').value = prev.end; // next class starts when last ended
-  document.getElementById('f-end').value = prev.end; // user adjusts
-  // Set same days
-  selectedDays = [...prev.days];
-  document.querySelectorAll('.day-chip').forEach(el => {
-    el.classList.toggle('on', selectedDays.includes(+el.dataset.i));
-  });
-  if (prev.alarm) document.getElementById('alarm-toggle').classList.add('on');
-  showToast('Previous class data copied!');
-}
-window.editClass = function(index) {
-  const classes = loadC();
-  const c = classes[index];
-  
-  // 1. Pre-fill the modal input fields
-  document.getElementById('f-subject').value = c.subject;
-  document.getElementById('f-block').value = c.block;
-  document.getElementById('f-room').value = c.room;
-  document.getElementById('f-teacher').value = c.teacher || '';
-  document.getElementById('f-start').value = c.start;
-  document.getElementById('f-end').value = c.end;
-  
-  // 2. Set the day chips
-  selectedDays = [...c.days];
-  buildChips(); // Resets the UI
-  document.querySelectorAll('.day-chip').forEach(chip => {
-    if (selectedDays.includes(parseInt(chip.dataset.i))) {
-      chip.classList.add('on');
-    }
-  });
-
-  // 3. Temporarily remove the old class so when you click "Save", it replaces it
-  const a = loadC();
-  a.splice(index, 1);
-  saveC(a);
-  
-  // 4. Show the modal
-  document.getElementById('modal').classList.add('open');
-};
 
 function saveClass() {
-  const subject = document.getElementById('f-subject').value.trim();
-  const block   = document.getElementById('f-block').value.trim();
-  const room    = document.getElementById('f-room').value.trim();
-  const teacher = document.getElementById('f-teacher').value.trim();
-  const start   = document.getElementById('f-start').value;
-  const end     = document.getElementById('f-end').value;
-  const alarm   = document.getElementById('alarm-toggle').classList.contains('on');
-  if (!subject||!block||!room||!start||!end||!selectedDays.length) { showToast('Fill all fields & pick at least one day'); return; }
-  if (toM(start)>=toM(end)) { showToast('End time must be after start time'); return; }
-  const a=loadC(); a.push({subject,block,room,teacher,start,end,days:[...selectedDays],alarm});
-  saveC(a); closeModal(); renderEditor(); renderHome(); scheduleAlarms();
-  showToast(`${subject} added!`);
-  if (alarm && 'Notification' in window && Notification.permission==='default') Notification.requestPermission();
+  const subject = document.getElementById('f-subject').value;
+  const block = document.getElementById('f-block').value;
+  const room = document.getElementById('f-room').value;
+  const start = document.getElementById('f-start').value;
+  const end = document.getElementById('f-end').value;
+  if(!subject || selectedDays.length === 0) return alert("Fill Subject and Days");
+  const a = loadC(); a.push({subject, block, room, start, end, days:selectedDays});
+  saveC(a); closeModal();
 }
 
-// ── SHARE ──
-function renderShare() {
-  const classes = loadC();
-  const box = document.getElementById('share-code-box');
-  const lenEl = document.getElementById('share-code-len');
-  if (!classes.length) { box.textContent='Add classes first.'; lenEl.textContent=''; return; }
-  const code = encodeShare(classes);
-  box.textContent = code;
-  lenEl.textContent = `${code.length} characters`;
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('topbar-date').textContent = `${DAYS_F[(now.getDay()+6)%7].slice(0,3)}, ${now.getDate()} ${MONTHS[now.getMonth()]}`;
 }
 
-document.getElementById('copy-btn').onclick = () => {
-  const code = document.getElementById('share-code-box').textContent;
-  if (code==='Add classes first.') { showToast('No classes to share yet'); return; }
-  navigator.clipboard.writeText(code).then(()=>showToast('Code copied!')).catch(()=>{
-    const ta=document.createElement('textarea'); ta.value=code; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('Copied!');
-  });
-};
+updateClock(); renderDayRow(); renderHome(); setInterval(updateClock, 10000);
+</script>
 
-document.getElementById('share-link-btn').onclick = async () => {
-  const classes = loadC();
-  if (!classes.length) { showToast('No classes to share yet'); return; }
-  const code = encodeShare(classes);
-  const url = `${location.origin}${location.pathname}?import=${code}`;
-  const text = `Here's my GLA timetable! Open this link to instantly import it:\n${url}`;
-  if (navigator.share) { try { await navigator.share({title:'GLA Timetable',text,url}); } catch(e){} }
-  else { navigator.clipboard.writeText(text).then(()=>showToast('Share text copied!')); }
-};
-
-document.getElementById('import-action-btn').onclick = () => {
-  let raw = document.getElementById('import-paste').value.trim();
-  if (!raw) { showToast('Paste a code or link first'); return; }
-  // Extract code from URL if pasted as link
-  try { const u=new URL(raw); const p=u.searchParams.get('import'); if(p) raw=p; } catch(e){}
-  const data = decodeShare(raw);
-  if (!data) { showToast('Invalid code — please try again'); return; }
-  if (loadC().length>0 && !confirm(`Import ${data.length} classes? This will replace your current timetable.`)) return;
-  saveC(data); renderHome(); renderShare(); scheduleAlarms();
-  document.getElementById('import-paste').value='';
-  showToast(`Imported ${data.length} classes!`);
-  goScreen('home');
-};
-
-// ── DEEP LINK: ?import=CODE ──
-function checkDeepLink() {
-  const p = new URLSearchParams(location.search).get('import');
-  if (!p) return;
-  const data = decodeShare(p);
-  if (!data) return;
-  // Clean URL
-  history.replaceState({}, '', location.pathname);
-  const msg = `Someone shared a timetable with ${data.length} classes. Import it?`;
-  if (confirm(msg)) {
-    if (loadC().length>0 && !confirm('This will replace your current timetable. Continue?')) return;
-    saveC(data); renderHome(); scheduleAlarms();
-    showToast(`Imported ${data.length} classes!`);
-  }
-}
-
-// ── INSTALL PWA ──
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault(); deferredPrompt=e;
-  document.getElementById('install-banner').classList.add('show');
-});
-document.getElementById('install-btn').onclick = async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const {outcome}=await deferredPrompt.userChoice;
-  if (outcome==='accepted') document.getElementById('install-banner').classList.remove('show');
-  deferredPrompt=null;
-};
-
-// ── SERVICE WORKER ──
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
-
-// ── INIT ──
-checkDeepLink();
-renderDayRow();
-renderHome();
-updateClock();
-scheduleAlarms();
-setInterval(()=>{ updateClock(); renderHome(); }, 30000);
-setInterval(scheduleAlarms, 3600000);
-  </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB2dbYAjTvozbeR93_cYf7R99OIwpZuKFw",
@@ -806,110 +295,61 @@ const firebaseConfig = {
   projectId: "campusnow-6f52a",
   storageBucket: "campusnow-6f52a.firebasestorage.app",
   messagingSenderId: "1071603068850",
-  appId: "1:1071603068850:web:fe1a6570df8eacb5447eab",
-  measurementId: "G-M9GW59JSBE"
+  appId: "1:1071603068850:web:fe1a6570df8eacb5447eab"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 const timetableRef = doc(db, "timetables", "gla_v2");
 
-// --- ADMIN PUSH FUNCTION ---
-window.pushToFirestore = async () => {
-    const localClasses = JSON.parse(localStorage.getItem('gla_v2') || '[]');
-    if (localClasses.length === 0) return alert("No classes found to push!");
-
-    const confirmPush = confirm(`Push ${localClasses.length} classes to the Global Timetable? This updates it for EVERYONE.`);
-    if (!confirmPush) return;
-
-    // Structure the data back for Firestore (un-flattening)
-    const dayMap = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-    const payload = {
-        version: Date.now(), // New version based on timestamp
-        mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []
-    };
-
-    localClasses.forEach(c => {
-        const { days, ...classData } = c; // separate days from the rest
-        c.days.forEach(dayIdx => {
-            const dayKey = dayMap[dayIdx];
-            if (dayKey) payload[dayKey].push(classData);
-        });
-    });
-
-    try {
-        await updateDoc(timetableRef, payload);
-        alert("✅ Success! Global Timetable Updated.");
-    } catch (e) {
-        console.error(e);
-        alert("❌ Error: Check Firebase Rules or Console.");
+// Admin Login (10 taps)
+let taps = 0;
+document.querySelector('.topbar-uni').onclick = async () => {
+    taps++;
+    if (taps === 10) {
+        try {
+            const res = await signInWithPopup(auth, provider);
+            if (res.user.email === "parvmishra44@gmail.com") {
+                document.getElementById('admin-push-btn').style.display = 'block';
+                showToast("Admin Active 🔓");
+            }
+        } catch (e) { console.error(e); }
+        taps = 0;
     }
 };
 
-document.getElementById('admin-push-btn').onclick = window.pushToFirestore;
+// Admin Push
+document.getElementById('admin-push-btn').onclick = async () => {
+    const classes = loadC();
+    const dayMap = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const payload = { version: Date.now() };
+    dayMap.forEach((day, idx) => {
+        payload[day] = classes.filter(c => c.days.includes(idx)).map(({days, ...rest}) => rest);
+    });
+    try { await updateDoc(timetableRef, payload); alert("Synced!"); } catch(e) { alert("Error"); }
+};
 
-// --- LISTENER (Your existing code) ---
+// Listener
 onSnapshot(timetableRef, (docSnap) => {
   if (!docSnap.exists()) return;
   const data = docSnap.data();
-  const oldVersion = localStorage.getItem("version");
-  const serverVersion = String(data.version || "0");
-
-  if (oldVersion !== serverVersion) {
-    const dayMap = { mon: 0, tue: 1, wed: 2, thu: 3, fri: 4, sat: 5, sun: 6 };
-    let flatSchedule = [];
-
+  const oldVer = localStorage.getItem("version");
+  if (oldVer !== String(data.version)) {
+    const dayLookup = { mon: 0, tue: 1, wed: 2, thu: 3, fri: 4, sat: 5, sun: 6 };
+    let flat = [];
     Object.keys(data).forEach(key => {
-      const dayIdx = dayMap[key.toLowerCase()];
-      if (dayIdx !== undefined && Array.isArray(data[key])) {
-        const processed = data[key].map(cls => ({ ...cls, days: [dayIdx] }));
-        flatSchedule = [...flatSchedule, ...processed];
+      const idx = dayLookup[key.toLowerCase()];
+      if (idx !== undefined && Array.isArray(data[key])) {
+        flat = [...flat, ...data[key].map(c => ({...c, days: [idx]}))];
       }
     });
-
-    localStorage.setItem("version", serverVersion);
-    localStorage.setItem("gla_v2", JSON.stringify(flatSchedule));
-
-    const banner = document.getElementById("install-banner");
-    banner.innerHTML = `
-      <div style="flex:1">
-        <strong>📢 Timetable Updated (v${serverVersion})</strong>
-        <span>Latest official schedule synced.</span>
-      </div>
-      <button class="install-btn" onclick="this.parentElement.classList.remove('show')">Got it</button>
-    `;
-    banner.classList.add("show");
-
-    if (typeof renderHome === "function") renderHome();
-    if (typeof renderEditor === "function") renderEditor();
-    if (typeof scheduleAlarms === "function") scheduleAlarms();
+    localStorage.setItem("version", data.version);
+    localStorage.setItem("gla_v2", JSON.stringify(flat));
+    renderHome(); renderEditor();
   }
 });
-  import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-
-// Secret Admin Activation
-let tapCount = 0;
-document.querySelector('.topbar-uni').onclick = async () => {
-    tapCount++;
-    if (tapCount === 10) {
-        try {
-            const result = await signInWithPopup(auth, provider);
-            if (result.user.email === "parvmishra44@gmail.com") {
-                document.getElementById('admin-push-btn').style.display = 'block';
-                showToast("Admin Mode: Unlocked 🔓");
-            } else {
-                showToast("Access Denied: Not an Admin");
-            }
-        } catch (error) {
-            console.error("Login failed", error);
-        }
-        tapCount = 0;
-    }
-};
 </script>
-
 </body>
 </html>
