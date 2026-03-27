@@ -648,7 +648,7 @@ function delClass(i) {
 }
 
 document.getElementById('load-default-btn').onclick = () => {
-  if (confirm('Load official schedule?')) { saveC(DEFAULT_TT); renderEditor(); renderHome(); }
+  if (confirm('Load official schedule?')) { saveC(window.FIREBASE_TT || DEFAULT_TT); renderEditor(); renderHome(); }
 };
 
 // ── MODAL ──
@@ -755,18 +755,21 @@ document.querySelector('.topbar-uni').onclick = async () => {
 onSnapshot(timetableRef, (docSnap) => {
   if (!docSnap.exists()) return;
   const data = docSnap.data();
+  
+  const dayLookup = { mon: 0, tue: 1, wed: 2, thu: 3, fri: 4, sat: 5, sun: 6 };
+  let flat = [];
+  Object.keys(data).forEach(key => {
+    const idx = dayLookup[key.toLowerCase()];
+    if (idx !== undefined && Array.isArray(data[key])) {
+      flat = [...flat, ...data[key].map(c => ({...c, days: [idx]}))];
+    }
+  });
+  window.FIREBASE_TT = flat;
+
   const oldVer = localStorage.getItem("version");
   const newVer = String(data.version || "0");
 
   if (oldVer !== newVer) {
-    const dayLookup = { mon: 0, tue: 1, wed: 2, thu: 3, fri: 4, sat: 5, sun: 6 };
-    let flat = [];
-    Object.keys(data).forEach(key => {
-      const idx = dayLookup[key.toLowerCase()];
-      if (idx !== undefined && Array.isArray(data[key])) {
-        flat = [...flat, ...data[key].map(c => ({...c, days: [idx]}))];
-      }
-    });
     localStorage.setItem("version", newVer);
     localStorage.setItem("gla_v2", JSON.stringify(flat));
     
