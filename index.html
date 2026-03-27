@@ -506,6 +506,19 @@ function setViewDay(i) { viewDay=i; renderDayRow(); renderHome(); }
 function getForDay(di) { return loadC().filter(c=>c.days.includes(di)).sort((a,b)=>toM(a.start)-toM(b.start)); }
 
 function renderHome() {
+  const allCls = loadC();
+  if (allCls.length === 0) {
+    document.getElementById('now-card').className = "now-card";
+    document.getElementById('now-card').innerHTML = `<div class="now-card-bar free"></div><div class="free-heading">Welcome! 👋</div><div class="free-sub">Your schedule is empty.</div>`;
+    document.getElementById('next-card').classList.remove('show');
+    document.getElementById('schedule-list').innerHTML = `<div class="empty">
+      <div class="empty-icon">📅</div>
+      <p style="margin-bottom:16px">No classes found. Would you like to load the official schedule?</p>
+      <button class="add-btn" style="margin:0 auto; padding: 12px 20px" onclick="if(confirm('Load official schedule?')) { saveC(window.FIREBASE_TT || DEFAULT_TT); renderEditor(); renderHome(); }">Load Global Timetable</button>
+    </div>`;
+    return;
+  }
+
   const today = todayIdx();
   const dIdx = viewDay!==null ? viewDay : today;
   const isToday = dIdx===today;
